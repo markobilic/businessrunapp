@@ -1,0 +1,158 @@
+<?php
+
+namespace App\PowerGridThemes;
+
+use \PowerComponents\LivewirePowerGrid\Themes\Tailwind;
+
+class SmallTheme extends Tailwind
+{
+    public string $name = 'tailwind';
+
+    public function table(): array
+    {
+        return [
+            'layout' => [
+                'base'      => 'mt-1 align-middle inline-block min-w-full w-full',
+                'div'       => 'relative border-x border-t border-pg-primary-200 dark:bg-pg-primary-700 dark:border-pg-primary-600',
+                'table'     => 'min-w-full dark:!bg-primary-800',
+                'container' => 'overflow-x-auto sm:-mx-3 lg:-mx-8',
+                'actions'   => '',
+            ],
+
+            'header' => [
+                'thead'    => 'shadow-sm bg-pg-primary-100 dark:bg-pg-primary-900',
+                'tr'       => '',
+                'th'       => 'font-extrabold px-1 py-1 text-left text-xs text-pg-primary-700 tracking-wider whitespace-nowrap dark:text-pg-primary-300',
+                'thAction' => '',
+            ],
+
+            'body' => [
+                'tbody'              => '',
+                'tbodyEmpty'         => '',
+                'tr'                 => 'border-b',
+                'td'                 => 'px-1 py-1',
+                'tdEmpty'            => 'px-2 py-1',
+                'tdSummarize'        => 'px-2 py-1',
+                'trSummarize'        => '',
+                'tdFilters'          => '',
+                'trFilters'          => '',
+                'tdActionsContainer' => '',
+            ],
+        ];
+    }
+
+    public function footer(): array
+    {
+        return [
+            'view'                   => $this->root() . '.footer',
+            'select'                 => 'hidden',
+            'footer'                 => 'hidden',
+            'footer_with_pagination' => 'hidden',
+        ];
+    }
+
+    public function cols(): array
+    {
+        return [
+            'div' => 'select-none flex items-center gap-1',
+        ];
+    }
+
+    public function editable(): array
+    {
+        return [
+            'view'  => $this->root() . '.editable',
+            'input' => 'focus:ring-primary-600 focus-within:focus:ring-primary-600 focus-within:ring-primary-600 dark:focus-within:ring-primary-600 flex ring-1 transition focus-within:ring-2 dark:ring-pg-primary-600 dark:text-pg-primary-300 text-gray-600 ring-gray-300 dark:bg-pg-primary-800 bg-white dark:placeholder-pg-primary-400 w-full border-0 bg-transparent py-1.5 px-2 ring-0 placeholder:text-gray-400 focus:outline-none sm:text-xs sm:leading-6 w-full',
+        ];
+    }
+
+    public function toggleable(): array
+    {
+        return [
+            'view' => $this->root() . '.toggleable',
+        ];
+    }
+
+    public function checkbox(): array
+    {
+        return [
+            'th'    => 'px-2 py-1 text-left text-xs font-medium text-pg-primary-500 tracking-wider',
+            'base'  => '',
+            'label' => 'flex items-center space-x-3',
+            'input' => 'form-checkbox dark:border-dark-600 border-1 dark:bg-dark-800 border-gray-300 bg-white transition duration-100 ease-in-out h-4 w-4 text-primary-500 focus:ring-primary-500 dark:ring-offset-dark-900',
+        ];
+    }
+
+    public function radio(): array
+    {
+        return [
+            'th'    => 'px-2 py-1 text-left text-xs font-medium text-pg-primary-500 tracking-wider',
+            'base'  => '',
+            'label' => 'flex items-center space-x-3',
+            'input' => 'form-radio transition ease-in-out duration-100',
+        ];
+    }
+
+    public function filterBoolean(): array
+    {
+        return [
+            'view'   => $this->root() . '.filters.boolean',
+            'base'   => 'min-w-[9.5rem]',
+            'select' => 'mt-1 appearance-none !bg-none focus:ring-primary-600 focus-within:focus:ring-primary-600 focus-within:ring-primary-600 dark:focus-within:ring-primary-600 flex ring-1 transition focus-within:ring-2 dark:ring-pg-primary-600 dark:text-pg-primary-300 text-gray-600 ring-gray-300 dark:bg-pg-primary-800 bg-white dark:placeholder-pg-primary-400 border-0 bg-transparent py-1.5 px-2 ring-0 placeholder:text-gray-400 focus:outline-none sm:text-xs sm:leading-6',
+        ];
+    }
+
+    public function filterDatePicker(): array
+    {
+        return [
+            'base'  => '',
+            'view'  => $this->root() . '.filters.date-picker',
+            'input' => 'mt-1 flatpickr flatpickr-input focus:ring-primary-600 focus-within:focus:ring-primary-600 focus-within:ring-primary-600 dark:focus-within:ring-primary-600 flex ring-1 transition focus-within:ring-2 dark:ring-pg-primary-600 dark:text-pg-primary-300 text-gray-600 ring-gray-300 dark:bg-pg-primary-800 bg-white dark:placeholder-pg-primary-400 w-full border-0 bg-transparent py-1.5 px-2 ring-0 placeholder:text-gray-400 focus:outline-none sm:text-xs sm:leading-6 w-auto',
+        ];
+    }
+
+    public function filterMultiSelect(): array
+    {
+        return [
+            'view'   => $this->root() . '.filters.multi-select',
+            'base'   => 'inline-block relative w-full',
+            'select' => 'mt-1',
+        ];
+    }
+
+    public function filterNumber(): array
+    {
+        return [
+            'view'  => $this->root() . '.filters.number',
+            'input' => 'mt-1 w-full inline-block focus:ring-primary-600 focus-within:focus:ring-primary-600 focus-within:ring-primary-600 dark:focus-within:ring-primary-600 flex ring-1 transition focus-within:ring-2 dark:ring-pg-primary-600 dark:text-pg-primary-300 text-gray-600 ring-gray-300 dark:bg-pg-primary-800 bg-white dark:placeholder-pg-primary-400 border-0 bg-transparent py-1.5 pl-2 ring-0 placeholder:text-gray-400 focus:outline-none sm:text-xs sm:leading-6',
+        ];
+    }
+
+    public function filterSelect(): array
+    {
+        return [
+            'view'   => $this->root() . '.filters.select',
+            'base'   => 'min-w-[9.5rem]',
+            'select' => 'mt-1 appearance-none !bg-none focus:ring-primary-600 focus-within:focus:ring-primary-600 focus-within:ring-primary-600 dark:focus-within:ring-primary-600 flex ring-1 transition focus-within:ring-2 dark:ring-pg-primary-600 dark:text-pg-primary-300 text-gray-600 ring-gray-300 dark:bg-pg-primary-800 bg-white dark:placeholder-pg-primary-400 border-0 bg-transparent py-1.5 px-2 ring-0 placeholder:text-gray-400 focus:outline-none sm:text-xs sm:leading-6 w-full',
+        ];
+    }
+
+    public function filterInputText(): array
+    {
+        return [
+            'view'   => $this->root() . '.filters.input-text',
+            'base'   => 'min-w-[9.5rem]',
+            'select' => 'appearance-none !bg-none focus:ring-primary-600 focus-within:focus:ring-primary-600 focus-within:ring-primary-600 dark:focus-within:ring-primary-600 flex ring-1 transition focus-within:ring-2 dark:ring-pg-primary-600 dark:text-pg-primary-300 text-gray-600 ring-gray-300 dark:bg-pg-primary-800 bg-white dark:placeholder-pg-primary-400 w-full border-0 bg-transparent py-1.5 px-2 ring-0 placeholder:text-gray-400 focus:outline-none sm:text-xs sm:leading-6 w-full',
+            'input'  => 'focus:ring-primary-600 focus-within:focus:ring-primary-600 focus-within:ring-primary-600 dark:focus-within:ring-primary-600 flex ring-1 transition focus-within:ring-2 dark:ring-pg-primary-600 dark:text-pg-primary-300 text-gray-600 ring-gray-300 dark:bg-pg-primary-800 bg-white dark:placeholder-pg-primary-400 w-full border-0 bg-transparent py-1.5 px-2 ring-0 placeholder:text-gray-400 focus:outline-none sm:text-xs sm:leading-6 w-full',
+        ];
+    }
+
+    public function searchBox(): array
+    {
+        return [
+            'input'      => 'focus:ring-primary-600 focus-within:focus:ring-primary-600 focus-within:ring-primary-600 dark:focus-within:ring-primary-600 flex items-center ring-1 transition focus-within:ring-2 dark:ring-pg-primary-600 dark:text-pg-primary-300 text-gray-600 ring-gray-300 dark:bg-pg-primary-800 bg-white dark:placeholder-pg-primary-400 w-full border-0 bg-transparent py-1.5 px-2 ring-0 placeholder:text-gray-400 focus:outline-none sm:text-xs sm:leading-6 w-full pl-8',
+            'iconClose'  => 'text-pg-primary-400 dark:text-pg-primary-200',
+            'iconSearch' => 'text-pg-primary-300 mr-2 w-5 h-5 dark:text-pg-primary-200',
+        ];
+    }
+}
