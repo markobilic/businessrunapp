@@ -110,15 +110,19 @@ new class extends Component {
 
     public function deleteSelectedReservation($reservationId)
     {
+        abort_unless(auth()->user()->hasRole(['superadmin', 'organizer']), 403);
+
         $this->reservationId = $reservationId;
         $this->dispatch('confirmDeletion', ['reservationId' => $reservationId]);
     }
     
     public function deleteReservationConfirmed(MailService $mailService)
     {
+        abort_unless(auth()->user()->hasRole(['superadmin', 'organizer']), 403);
+
         if($this->reservationId)
         {
-            $reservation = Reservation::findOrFail($this->reservationId);
+            $reservation = Reservation::whereHas('race', fn ($q) => $q->where('organizer_id', $this->organizerId))->findOrFail($this->reservationId);
 
             if($reservation)
             {
@@ -140,15 +144,19 @@ new class extends Component {
 
     public function lockSelectedReservation($reservationId)
     {
+        abort_unless(auth()->user()->hasRole(['superadmin', 'organizer']), 403);
+
         $this->reservationId = $reservationId;
         $this->dispatch('confirmLock', ['reservationId' => $reservationId]);
     }
 
     public function lockReservationConfirmed()
     {
+        abort_unless(auth()->user()->hasRole(['superadmin', 'organizer']), 403);
+
         if($this->reservationId)
         {
-            $reservation = Reservation::findOrFail($this->reservationId);
+            $reservation = Reservation::whereHas('race', fn ($q) => $q->where('organizer_id', $this->organizerId))->findOrFail($this->reservationId);
 
             if($reservation)
             {
@@ -165,15 +173,19 @@ new class extends Component {
 
     public function unlockSelectedReservation($reservationId)
     {
+        abort_unless(auth()->user()->hasRole(['superadmin', 'organizer']), 403);
+
         $this->reservationId = $reservationId;
         $this->dispatch('confirmUnlock', ['reservationId' => $reservationId]);
     }
 
     public function unlockReservationConfirmed()
     {
+        abort_unless(auth()->user()->hasRole(['superadmin', 'organizer']), 403);
+
         if($this->reservationId)
         {
-            $reservation = Reservation::findOrFail($this->reservationId);
+            $reservation = Reservation::whereHas('race', fn ($q) => $q->where('organizer_id', $this->organizerId))->findOrFail($this->reservationId);
 
             if($reservation)
             {

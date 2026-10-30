@@ -43,7 +43,9 @@ new class extends Component {
     {
         if($this->runnerId)
         {
-            $runner = Runner::findOrFail($this->runnerId);
+            $runner = Runner::whereHas('captain', fn ($q) => $q->where('organizer_id', $this->organizerId))
+                ->when(auth()->user()->hasRole('captain'), fn ($q) => $q->where('captain_id', auth()->user()->captain->id))
+                ->findOrFail($this->runnerId);
             
             $runner->email = $runner->email."_DELETED";
             $runner->save();

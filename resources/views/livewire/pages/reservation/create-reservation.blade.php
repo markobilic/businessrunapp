@@ -154,6 +154,11 @@ new class extends Component {
 
     public function insert(MailService $mailService)
     {
+        // Kapetan uvijek radi za sebe, bez obzira na captain_id iz preglednika.
+        if (auth()->user()->hasRole('captain')) {
+            $this->captain_id = auth()->user()->captain->id;
+        }
+
         if ($this->getErrorBag()->isNotEmpty())
         {
             return;

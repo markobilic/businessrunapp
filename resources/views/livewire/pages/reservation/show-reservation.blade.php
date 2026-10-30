@@ -602,7 +602,7 @@ new class extends Component {
     public function importRunners()
     {
         $this->validate([
-            'importFile' => 'required|file|mimes:xls,xlsx,csv',
+            'importFile' => 'required|file|max:10240|mimes:xls,xlsx,csv',
         ]);
     
         $reservation = Reservation::findOrFail($this->reservationId);

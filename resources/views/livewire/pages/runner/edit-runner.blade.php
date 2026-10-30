@@ -136,6 +136,11 @@ new class extends Component {
 
     public function edit()
     {
+        // Kapetan uvijek radi za sebe, bez obzira na captain_id iz preglednika.
+        if (auth()->user()->hasRole('captain')) {
+            $this->captain_id = auth()->user()->captain->id;
+        }
+
         $validatedData = $this->validate();
 
         $this->selectedRunner->name = $validatedData['name'];
