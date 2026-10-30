@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('inventory_intervals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('inventory_id')->constrained('inventories');   
+            $table->foreignId('inventory_id')->constrained('inventories');
             $table->string('name');
             $table->decimal('price', 8, 2);
             $table->dateTime('start_date');

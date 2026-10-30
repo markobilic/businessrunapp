@@ -2,15 +2,14 @@
 
 namespace App\Providers;
 
-use App\Events\NewReservation;
 use App\Events\DeleteReservation;
-use App\Events\UpdateReservation;
 use App\Events\NewCompany;
+use App\Events\NewReservation;
 use App\Events\UpdateCompany;
 use App\Events\UpdateCompanyCaptain;
+use App\Events\UpdateReservation;
 use App\Listeners\SendWebhookNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {

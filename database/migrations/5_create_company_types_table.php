@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('company_types', function (Blueprint $table) {
             $table->id();
             $table->string('company_type_name');
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers');   
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers');
             $table->timestamps();
             $table->softDeletes();
         });

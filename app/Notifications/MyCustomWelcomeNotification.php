@@ -3,8 +3,8 @@
 namespace App\Notifications;
 
 use Illuminate\Notifications\Messages\MailMessage;
-use Spatie\WelcomeNotification\WelcomeNotification;
 use Illuminate\Support\Facades\Lang;
+use Spatie\WelcomeNotification\WelcomeNotification;
 
 class MyCustomWelcomeNotification extends WelcomeNotification
 {

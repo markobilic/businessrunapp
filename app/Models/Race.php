@@ -5,11 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\PromoCode;
-use App\Models\Reservation;
-use App\Models\Inventory;
-use App\Models\Organizer;
-use App\Models\User;
 
 class Race extends Model
 {
@@ -36,7 +31,7 @@ class Race extends Model
         'user_id',
         'locked',
         'logo',
-        'web'
+        'web',
     ];
 
     public function organizer()

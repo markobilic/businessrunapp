@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('longest_races', function (Blueprint $table) {
             $table->id();
             $table->string('longest_race_name');
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers');   
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers');
             $table->timestamps();
             $table->softDeletes();
         });

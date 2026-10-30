@@ -2,14 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Captain;
 use App\Models\Race;
-use App\Models\Reservation;
-use App\Services\ExportService;
-use App\Services\MailService;
+use App\Services\ReservationService_v2;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use App\Services\ReservationService_v2;
 
 class FinalBillCron extends Command
 {
@@ -32,7 +28,6 @@ class FinalBillCron extends Command
      *
      * @return mixed
      */
-
     public function handle()
     {
         /*
@@ -45,7 +40,7 @@ class FinalBillCron extends Command
 
         $reservationService_v2 = new ReservationService_v2();
 
-        foreach ($races as $race) 
+        foreach ($races as $race)
         {
             foreach($race->reservations as $reservation)
             {

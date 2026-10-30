@@ -1,37 +1,32 @@
 <?php
-namespace App\PL\Production;
 
+namespace App\PL\Production;
 
 class Sifarnik
 {
-
     /**
-     * @var Zapis[] $zapis
+     * @var Zapis[]
      */
     protected $zapis = null;
 
-    
-    public function __construct()
-    {
-    
-    }
+    public function __construct() {}
 
     /**
      * @return Zapis[]
      */
     public function getZapis()
     {
-      return $this->zapis;
+        return $this->zapis;
     }
 
     /**
-     * @param Zapis[] $zapis
+     * @param  Zapis[]  $zapis
      * @return Sifarnik
      */
-    public function setZapis(array $zapis = null)
+    public function setZapis(?array $zapis = null)
     {
-      $this->zapis = $zapis;
-      return $this;
-    }
+        $this->zapis = $zapis;
 
+        return $this;
+    }
 }

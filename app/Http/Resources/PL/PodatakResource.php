@@ -17,7 +17,7 @@ class PodatakResource extends JsonResource
         return [
             'naziv' => $this->naziv,
             'vrednost' => $this->vrednost,
-            'tip' => $this->tip
+            'tip' => $this->tip,
         ];
     }
 }

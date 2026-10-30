@@ -2,11 +2,7 @@
 
 namespace App\Models\Offline;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Captain;
-use App\Models\Inventory;
 use App\Models\InventoryInterval;
 use App\Models\Organizer;
 use App\Models\PromoCode;
@@ -14,6 +10,7 @@ use App\Models\Reservation;
 use App\Models\ReservationInterval;
 use App\Models\Translation;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class Billable extends Model
 {
@@ -83,34 +80,29 @@ class Billable extends Model
         $extraProducts = [];
         $finalExtraProduct = [];
 
-        if ($reservation->price()['extraProduct'] && count($reservation->price()['extraProduct']) > 0) 
-        {
-            foreach ($reservation->price()['extraProduct'] as $extraProduct) 
-            {
+        if ($reservation->price()['extraProduct'] && count($reservation->price()['extraProduct']) > 0) {
+            foreach ($reservation->price()['extraProduct'] as $extraProduct) {
                 $priceForOne = $extraProduct['price'];
-                $extraProductName = $encode->service . ' ' . $extraProduct['name'];
-                $extraProductPriceForOne = $encode->price . ' ' . number_format($priceForOne, 2) . ' ' . $currency;
-                $extraProductAmount = $encode->count . ' ' . $extraProduct['amount'];
-                               $extraProductTotal = $encode->suma . ' ' . number_format($extraProduct['total'], 2) . ' ' . $currency;
+                $extraProductName = $encode->service.' '.$extraProduct['name'];
+                $extraProductPriceForOne = $encode->price.' '.number_format($priceForOne, 2).' '.$currency;
+                $extraProductAmount = $encode->count.' '.$extraProduct['amount'];
+                $extraProductTotal = $encode->suma.' '.number_format($extraProduct['total'], 2).' '.$currency;
 
-                $array = array($extraProductName, $extraProductAmount, $extraProductPriceForOne, $extraProductTotal);
+                $array = [$extraProductName, $extraProductAmount, $extraProductPriceForOne, $extraProductTotal];
                 $implode = implode('<br>', $array);
                 $extraProducts[] = $implode;
                 $finalExtraProduct = implode('<br>', $extraProducts);
             }
-        } 
-        else 
-        {
+        } else {
             $extraProducts = [];
             $finalExtraProduct = '';
         }
 
         $paymentDate = Carbon::parse($reservation->reservationPaymentDate())->format('d/m/Y');
 
-        if($reservation->locked_date && $reservation->payment_date) 
-        {
+        if ($reservation->locked_date && $reservation->payment_date) {
             $paymentDate = Carbon::parse($reservation->payment_date)->format('d/m/Y');
-        } 
+        }
 
         $this->attributes['race_date'] = Carbon::parse($reservation->race->starting_date)->format('d/m/Y');
         $reservationCount = $reservation->reserved_places * $reservation->interval()->price;
@@ -158,20 +150,17 @@ class Billable extends Model
         $this->attributes['organizer_website'] = $organizer->website;
         $this->attributes['organizer_iban'] = $organizer->giro_account;
         $this->attributes['organizer_currency'] = $organizer->currency;
-        $this->attributes['organizer_logo'] = '<img src="' . $organizer->logo . '" height="200" width="300">';
-        $this->attributes['invoice_signature'] = '<img src="' . $organizer->invoice_signature . '" height="200" width="300">';
+        $this->attributes['organizer_logo'] = '<img src="'.$organizer->logo.'" height="200" width="300">';
+        $this->attributes['invoice_signature'] = '<img src="'.$organizer->invoice_signature.'" height="200" width="300">';
     }
 
     public function calculatePrices($reservation, $intervals)
     {
         $total = 0;
 
-        if (isset($reservation->reservedPlaces)) 
-        {
+        if (isset($reservation->reservedPlaces)) {
             $reservedPlaces = $reservation->reservedPlaces;
-        } 
-        else 
-        {
+        } else {
             $temp = Reservation::find($reservation->id);
             $reservedPlaces = $temp->reserved_places;
         }
@@ -180,39 +169,29 @@ class Billable extends Model
 
         $extraProducts = ReservationInterval::where('reservation_id', $reservation->id)->get();
 
-        if (count($extraProducts) > 0) 
-        {
+        if (count($extraProducts) > 0) {
             $totalForExtra = 0;
 
-            foreach ($extraProducts as $extraProduct) 
-            {
+            foreach ($extraProducts as $extraProduct) {
                 $extraProduct['interval'] = InventoryInterval::where('inventory_id', $extraProduct->inventory_id)->first();
                 $extraProduct['price'] = $extraProduct->amount * $extraProduct['interval']['price'];
                 $totalForExtra += $extraProduct->amount * $extraProduct['interval']['price'];
 
-                if ($reservation->promo_code) 
-                {
+                if ($reservation->promo_code) {
                     $promoCode = PromoCode::where('promo_code', $reservation->promo_code)->first();
 
-                    if ($promoCode->type == 2) 
-                    {
+                    if ($promoCode->type == 2) {
                         $newAmount = 0;
 
-                        if ($extraProduct->amount < $promoCode->amount) 
-                        {
+                        if ($extraProduct->amount < $promoCode->amount) {
                             $newAmount = 0;
-                        } 
-                        else 
-                        {
+                        } else {
                             $newAmount = $extraProduct->amount - $promoCode->amount;
                         }
 
-                        if ($extraProduct->amount < $promoCode->amount) 
-                        {
+                        if ($extraProduct->amount < $promoCode->amount) {
                             $newAmount = 0;
-                        } 
-                        else 
-                        {
+                        } else {
                             $newAmount = $extraProduct->amount - $promoCode->amount;
                         }
 
@@ -220,9 +199,7 @@ class Billable extends Model
                         $extraProduct['price'] = $newAmount * $extraProduct['interval']['price'];
                         $total = $total + $totalForPromoCode;
                     }
-                } 
-                else 
-                {
+                } else {
                     $total = $total + $totalForExtra;
                 }
             }
@@ -233,16 +210,12 @@ class Billable extends Model
         $totalSale = 0;
         $totalForPromoCode = 0;
 
-        if ($reservation->promo_code) 
-        {
+        if ($reservation->promo_code) {
             $promoCode = PromoCode::where('promo_code', $reservation->promo_code)->first();
 
-            if ($promoCode) 
-            {
-                if ($promoCode->type == 0) 
-                {
-                    if ($reservation->reserved_places > $promoCode->amount) 
-                    {
+            if ($promoCode) {
+                if ($promoCode->type == 0) {
+                    if ($reservation->reserved_places > $promoCode->amount) {
                         $newAmount = $reservation->reserved_places - $promoCode->amount;
                     }
 
@@ -251,22 +224,19 @@ class Billable extends Model
                     $total = $totalForPromoCode;
                 }
 
-                if ($promoCode->type == 1) 
-                {
+                if ($promoCode->type == 1) {
                     $totalSale = $promoCode->price * $reservation->reserved_places;
                     $totalForPromoCode = $totalSale;
                     $total = $totalForPromoCode;
                 }
 
-                if ($promoCode->type == 2) 
-                {
+                if ($promoCode->type == 2) {
                     $totalSale = $promoCode->amount * $extraProduct['interval']['price'];
                 }
             }
         }
 
-        if ($reservation->promo_code && count($extraProducts) > 0 && $promoCode && $promoCode->type !== 2) 
-        {
+        if ($reservation->promo_code && count($extraProducts) > 0 && $promoCode && $promoCode->type !== 2) {
             $total = $totalForExtra + $totalForPromoCode;
         }
 
@@ -276,8 +246,7 @@ class Billable extends Model
         $vatPrice = 0;
         $totalPrice = 0;
 
-        if ($organizer->vat_percent > 0) 
-        {
+        if ($organizer->vat_percent > 0) {
             $vatPercent = $organizer->vat_percent / 100;
             $vatPrice = $total * $vatPercent;
         }
@@ -285,8 +254,7 @@ class Billable extends Model
         $totalPrice = $total + $vatPrice;
         $amount = 0;
 
-        foreach ($extraProducts as $extraProduct) 
-        {
+        foreach ($extraProducts as $extraProduct) {
             $amount += $extraProduct->amount;
         }
 

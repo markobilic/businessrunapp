@@ -2,12 +2,11 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Captain;
 use App\Models\Race;
-use App\Models\Reservation;
 use App\Services\MailService;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class FreeSpotsCron extends Command
 {
@@ -28,23 +27,14 @@ class FreeSpotsCron extends Command
     public MailService $mailService;
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct(MailService $mailService)
-    {
-        parent::__construct();
-        $this->mailService = $mailService;
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(MailService $mailService)
     {
+        $this->mailService = $mailService;
+
         $today = Carbon::now();
         $inThreeDays = Carbon::parse($today)->addDays(3)->format('Y-m-d');
 
@@ -56,14 +46,11 @@ class FreeSpotsCron extends Command
             }])
             ->get();
 
-        foreach ($races as $race) 
-        {
-            foreach ($race->reservations as $reservation) 
-            {
+        foreach ($races as $race) {
+            foreach ($race->reservations as $reservation) {
                 $filledPlaces = count($reservation->runnerReservations);
 
-                if ($reservation->reserved_places > $filledPlaces) 
-                {
+                if ($reservation->reserved_places > $filledPlaces) {
                     $captain = Captain::where('id', $reservation->captain_id)->first();
                     $freeSpots = $reservation->reserved_places - $filledPlaces;
                     $date = Carbon::parse($race->application_end)->format('d-m-Y');

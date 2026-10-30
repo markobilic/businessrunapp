@@ -1,14 +1,8 @@
 <?php
-namespace App\PL\Test;
 
+namespace App\PL\Test;
 
 class SviPodaciORazloguBrisanja
 {
-
-    
-    public function __construct()
-    {
-    
-    }
-
+    public function __construct() {}
 }

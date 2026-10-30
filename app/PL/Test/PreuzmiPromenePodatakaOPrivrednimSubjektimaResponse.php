@@ -1,21 +1,20 @@
 <?php
-namespace App\PL\Test;
 
+namespace App\PL\Test;
 
 class PreuzmiPromenePodatakaOPrivrednimSubjektimaResponse
 {
-
     /**
-     * @var ArrayOfPrivredniSubjekat $privredniSubjektiPodaci
+     * @var ArrayOfPrivredniSubjekat
      */
     protected $privredniSubjektiPodaci = null;
 
     /**
-     * @param ArrayOfPrivredniSubjekat $privredniSubjektiPodaci
+     * @param  ArrayOfPrivredniSubjekat  $privredniSubjektiPodaci
      */
     public function __construct($privredniSubjektiPodaci)
     {
-      $this->privredniSubjektiPodaci = $privredniSubjektiPodaci;
+        $this->privredniSubjektiPodaci = $privredniSubjektiPodaci;
     }
 
     /**
@@ -23,17 +22,17 @@ class PreuzmiPromenePodatakaOPrivrednimSubjektimaResponse
      */
     public function getPrivredniSubjektiPodaci()
     {
-      return $this->privredniSubjektiPodaci;
+        return $this->privredniSubjektiPodaci;
     }
 
     /**
-     * @param ArrayOfPrivredniSubjekat $privredniSubjektiPodaci
+     * @param  ArrayOfPrivredniSubjekat  $privredniSubjektiPodaci
      * @return PreuzmiPromenePodatakaOPrivrednimSubjektimaResponse
      */
     public function setPrivredniSubjektiPodaci($privredniSubjektiPodaci)
     {
-      $this->privredniSubjektiPodaci = $privredniSubjektiPodaci;
-      return $this;
-    }
+        $this->privredniSubjektiPodaci = $privredniSubjektiPodaci;
 
+        return $this;
+    }
 }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('template_type_code');
             $table->string('template_type_name');
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers');   
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers');
             $table->timestamps();
         });
     }

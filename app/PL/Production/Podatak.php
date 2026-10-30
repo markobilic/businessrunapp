@@ -1,35 +1,34 @@
 <?php
-namespace App\PL\Production;
 
+namespace App\PL\Production;
 
 class Podatak
 {
-
     /**
-     * @var string $naziv
+     * @var string
      */
     protected $naziv = null;
 
     /**
-     * @var string $vrednost
+     * @var string
      */
     protected $vrednost = null;
 
     /**
-     * @var string $tip
+     * @var string
      */
     protected $tip = null;
 
     /**
-     * @param string $naziv
-     * @param string $vrednost
-     * @param string $tip
+     * @param  string  $naziv
+     * @param  string  $vrednost
+     * @param  string  $tip
      */
     public function __construct($naziv, $vrednost, $tip)
     {
-      $this->naziv = $naziv;
-      $this->vrednost = $vrednost;
-      $this->tip = $tip;
+        $this->naziv = $naziv;
+        $this->vrednost = $vrednost;
+        $this->tip = $tip;
     }
 
     /**
@@ -37,17 +36,18 @@ class Podatak
      */
     public function getNaziv()
     {
-      return $this->naziv;
+        return $this->naziv;
     }
 
     /**
-     * @param string $naziv
+     * @param  string  $naziv
      * @return Podatak
      */
     public function setNaziv($naziv)
     {
-      $this->naziv = $naziv;
-      return $this;
+        $this->naziv = $naziv;
+
+        return $this;
     }
 
     /**
@@ -55,17 +55,18 @@ class Podatak
      */
     public function getVrednost()
     {
-      return $this->vrednost;
+        return $this->vrednost;
     }
 
     /**
-     * @param string $vrednost
+     * @param  string  $vrednost
      * @return Podatak
      */
     public function setVrednost($vrednost)
     {
-      $this->vrednost = $vrednost;
-      return $this;
+        $this->vrednost = $vrednost;
+
+        return $this;
     }
 
     /**
@@ -73,17 +74,17 @@ class Podatak
      */
     public function getTip()
     {
-      return $this->tip;
+        return $this->tip;
     }
 
     /**
-     * @param string $tip
+     * @param  string  $tip
      * @return Podatak
      */
     public function setTip($tip)
     {
-      $this->tip = $tip;
-      return $this;
-    }
+        $this->tip = $tip;
 
+        return $this;
+    }
 }

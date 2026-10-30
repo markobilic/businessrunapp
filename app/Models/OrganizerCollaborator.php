@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Organizer;
-use App\Models\User;
 
 class OrganizerCollaborator extends Model
 {
@@ -18,7 +16,7 @@ class OrganizerCollaborator extends Model
      */
     protected $fillable = [
         'organizer_id',
-        'user_id'
+        'user_id',
     ];
 
     public function organizer()

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('shirt_sizes', function (Blueprint $table) {
             $table->id();
             $table->string('shirt_size_name');
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers');   
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers');
             $table->timestamps();
             $table->softDeletes();
         });

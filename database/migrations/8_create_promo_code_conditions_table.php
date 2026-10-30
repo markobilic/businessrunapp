@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('promo_code_conditions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('promo_code_id')->constrained('promo_codes');  
+            $table->foreignId('promo_code_id')->constrained('promo_codes');
             $table->boolean('sponsor')->default(0);
             $table->boolean('partner')->default(0);
             $table->integer('min_runners')->default(0);

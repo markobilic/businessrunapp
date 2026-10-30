@@ -5,14 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Captain;
-use App\Models\ShirtSize;
-use App\Models\SocksSize;
-use App\Models\WorkPosition;
-use App\Models\WorkSector;
-use App\Models\WeekRunning;
-use App\Models\LongestRace;
-use App\Models\RunnerReservation;
 
 class Runner extends Model
 {
@@ -43,7 +35,7 @@ class Runner extends Model
         'week_running_id',
         'longest_race_id',
         'captain_id',
-        'remember_token'
+        'remember_token',
     ];
 
     public function captain()
@@ -55,7 +47,7 @@ class Runner extends Model
     {
         return $this->belongsTo(ShirtSize::class, 'shirt_size_id');
     }
-    
+
     public function socksSize()
     {
         return $this->belongsTo(SocksSize::class, 'socks_size_id');

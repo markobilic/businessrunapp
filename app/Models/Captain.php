@@ -5,13 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Organizer;
-use App\Models\User;
-use App\Models\TotalEmployeeType;
-use App\Models\CompanyType;
-use App\Models\BusinessType;
-use App\Models\Reservation;
-use App\Models\CaptainAddress;
 
 class Captain extends Model
 {
@@ -29,14 +22,14 @@ class Captain extends Model
         'name',
         'last_name',
         'team_name',
-        'company_name',        
-        'city',  
-        'postcode',  
-        'address',    
+        'company_name',
+        'city',
+        'postcode',
+        'address',
         'phone',
         'pin',
         'jbkjs',
-        'identification_number',        
+        'identification_number',
         'billing_company',
         'billing_city',
         'billing_postcode',
@@ -54,7 +47,7 @@ class Captain extends Model
         'custom_welcome',
         'remember_token',
         'sponsor',
-        'partner'
+        'partner',
     ];
 
     public function organizer()

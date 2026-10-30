@@ -2,18 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Captain;
-use App\Models\Race;
-use App\Models\CaptainAddress;
-use App\Models\KancelarkaResponse;
-use App\Models\Order;
-use App\Models\ReservationInterval;
-use App\Models\RunnerReservation;
-use App\Models\BankTransaction;
-use Carbon\Carbon;
 
 class Reservation extends Model
 {
@@ -48,9 +40,9 @@ class Reservation extends Model
         'note',
         'created_at',
     ];
-    
+
     protected $casts = [
-        'created_at'  => 'date:Y-m-d',
+        'created_at' => 'date:Y-m-d',
         'locked_date' => 'date:Y-m-d',
     ];
 
@@ -96,48 +88,39 @@ class Reservation extends Model
 
     public function scopeReservationDate()
     {
-        if ($this->locked_date) 
-        {
-            return  Carbon::parse($this->locked_date)->format('Y-m-d');
-        } 
-        else if ($this->payment_date) 
-        {
+        if ($this->locked_date) {
+            return Carbon::parse($this->locked_date)->format('Y-m-d');
+        } elseif ($this->payment_date) {
             return Carbon::parse($this->payment_date)->format('Y-m-d');
         }
     }
+
     public function scopeReservationPaymentDate()
     {
-        if ($this->locked_date) 
-        {
-            return  Carbon::parse($this->locked_date)->format('Y-m-d');
-        } 
-        else if ($this->payment_date) 
-        {
+        if ($this->locked_date) {
+            return Carbon::parse($this->locked_date)->format('Y-m-d');
+        } elseif ($this->payment_date) {
             return Carbon::parse($this->payment_date)->format('Y-m-d');
-        } 
-        else 
-        {
+        } else {
             $inventory = Inventory::where('race_id', $this->race_id)
                 ->whereHas('inventoryType', function ($query) {
                     $query->where('inventory_type_name', 'Akontacija');
                 })
-                ->first();    
+                ->first();
 
-            if ($inventory)
-            {
+            if ($inventory) {
                 $interval = InventoryInterval::where([
-                        ['inventory_id', $inventory->id],
-                        ['start_date', '<=', Carbon::now()->toDateString()],
-                        ['end_date', '>=',  Carbon::now()->toDateString()]
-                    ])
+                    ['inventory_id', $inventory->id],
+                    ['start_date', '<=', Carbon::now()->toDateString()],
+                    ['end_date', '>=',  Carbon::now()->toDateString()],
+                ])
                     ->orderBy('start_date', 'ASC')
                     ->first();
 
-                if (!$interval) 
-                {
+                if (! $interval) {
                     $interval = InventoryInterval::where([
-                            ['inventory_id', $inventory->id],
-                        ])
+                        ['inventory_id', $inventory->id],
+                    ])
                         ->orderBy('end_date', 'desc')
                         ->first();
                 }
@@ -145,114 +128,91 @@ class Reservation extends Model
                 $intervalStartDate = Carbon::createFromFormat('Y-m-d H:i:s', $interval->start_date);
                 $reservationCreatedAt = Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at);
 
-                if (isset($interval) && $intervalStartDate->gte($reservationCreatedAt)) 
-                {
+                if (isset($interval) && $intervalStartDate->gte($reservationCreatedAt)) {
                     return Carbon::parse($interval->start_date)->format('Y-m-d');
-                } 
-                else 
-                {
+                } else {
                     return Carbon::parse($this->created_at)->format('Y-m-d');
                 }
-            } 
-            else 
-            {
+            } else {
                 return Carbon::parse($this->created_at)->format('Y-m-d');
             }
         }
     }
+
     public function scopeInterval()
     {
         $inventory = Inventory::where('race_id', $this->race_id)
             ->whereHas('inventoryType', function ($query) {
                 $query->where('inventory_type_name', 'Akontacija');
             })
-            ->first(); 
+            ->first();
 
-        if (isset($inventory)) 
-        {
+        if (isset($inventory)) {
             $interval = InventoryInterval::where([
-                    ['inventory_id', $inventory->id],
-                    ['start_date', '<=', $this->reservationPaymentDate()],
-                    ['end_date', '>=', $this->reservationPaymentDate()]
-                ])
+                ['inventory_id', $inventory->id],
+                ['start_date', '<=', $this->reservationPaymentDate()],
+                ['end_date', '>=', $this->reservationPaymentDate()],
+            ])
                 ->orderBy('start_date', 'ASC')
                 ->first();
 
-            if (!isset($interval)) 
-            {
+            if (! isset($interval)) {
                 $interval = InventoryInterval::where('inventory_id', $inventory->id)
                     ->orderBy('end_date', 'desc')
                     ->first();
             }
 
             return $interval;
-        } 
-        else 
-        {
+        } else {
             return null;
         }
     }
+
     public function scopePrice()
     {
         $totalExcludingTax = 0;
 
-        if ($this->interval() && $this->reserved_places) 
-        {
+        if ($this->interval() && $this->reserved_places) {
             $totalExcludingTax = $this->reserved_places * $this->interval()->price;
         }
 
         $extraProducts = ReservationInterval::where('reservation_id', $this->id)->get();
         $totalForPromoCode = 0;
 
-        if (count($extraProducts) > 0) 
-        {
+        if (count($extraProducts) > 0) {
             $totalForExtra = 0;
 
-            foreach ($extraProducts as $extraProduct) 
-            {
+            foreach ($extraProducts as $extraProduct) {
                 $extraProduct['interval'] = InventoryInterval::where('inventory_id', $extraProduct->inventory_id)->first();
                 $extraProduct['price'] = $extraProduct->amount * $extraProduct['interval']['price'];
                 $totalForExtra += $extraProduct->amount * $extraProduct['interval']['price'];
 
-                if ($this->promo_code) 
-                {
-                    if ($this->promoCode()->promo_type_id == 3) 
-                    {
+                if ($this->promo_code) {
+                    if ($this->promoCode()->promo_type_id == 3) {
                         $newAmount = 0;
 
-                        if ($extraProduct->amount < $this->promoCode()->amount) 
-                        {
+                        if ($extraProduct->amount < $this->promoCode()->amount) {
                             $newAmount = 0;
-                        } 
-                        else 
-                        {
+                        } else {
                             $newAmount = $extraProduct->amount - $this->promoCode()->amount;
                         }
 
-                        if ($extraProduct->amount < $this->promoCode()->amount) 
-                        {
+                        if ($extraProduct->amount < $this->promoCode()->amount) {
                             $newAmount = 0;
-                        } 
-                        else 
-                        {
+                        } else {
                             $newAmount = $extraProduct->amount - $this->promoCode()->amount;
                         }
 
                         $totalForPromoCode = $newAmount * $extraProduct['interval']['price'];
                         $extraProduct['price'] = $newAmount * $extraProduct['interval']['price'];
                     }
-                } 
-                else 
-                {
+                } else {
                 }
             }
 
-            if ($this->promo_code) 
-            {
+            if ($this->promo_code) {
                 $totalExcludingTax = $totalExcludingTax + $totalForPromoCode;
-            } 
-            else 
-            {
+            } else {
                 $totalExcludingTax = $totalExcludingTax + $totalForExtra;
             }
         }
@@ -260,16 +220,12 @@ class Reservation extends Model
         $newAmount = 0;
         $totalSale = 0;
 
-        if ($this->promo_code) 
-        {
-            $promoCode = PromoCode::where([['promo_code', $this->promo_code],['race_id', $this->race_id]])->first();
+        if ($this->promo_code) {
+            $promoCode = PromoCode::where([['promo_code', $this->promo_code], ['race_id', $this->race_id]])->first();
 
-            if ($promoCode) 
-            {
-                if ($promoCode->promo_type_id == 1) 
-                {
-                    if ($this->reserved_places > $promoCode->amount) 
-                    {
+            if ($promoCode) {
+                if ($promoCode->promo_type_id == 1) {
+                    if ($this->reserved_places > $promoCode->amount) {
                         $newAmount = $this->reserved_places - $promoCode->amount;
                     }
 
@@ -278,22 +234,19 @@ class Reservation extends Model
                     $totalExcludingTax = $totalForPromoCode;
                 }
 
-                if ($promoCode->promo_type_id == 2) 
-                {
+                if ($promoCode->promo_type_id == 2) {
                     $totalSale = $promoCode->price * $this->reserved_places;
                     $totalForPromoCode = $totalSale;
                     $totalExcludingTax = $totalForPromoCode;
                 }
 
-                if ($promoCode->promo_type_id == 3) 
-                {
+                if ($promoCode->promo_type_id == 3) {
                     $totalSale = $promoCode->amount * $extraProduct['interval']['price'];
                 }
             }
         }
 
-        if ($this->promo_code && count($extraProducts) > 0 && $promoCode && $promoCode->promo_type_id !== 3) 
-        {
+        if ($this->promo_code && count($extraProducts) > 0 && $promoCode && $promoCode->promo_type_id !== 3) {
             $totalExcludingTax = $totalForExtra + $totalForPromoCode;
         }
 
@@ -301,8 +254,7 @@ class Reservation extends Model
         $vatPrice = 0;
         $totalIncludingTax = 0;
 
-        if ($this->captain->organizer->countryData->vat_percent > 0) 
-        {
+        if ($this->captain->organizer->countryData->vat_percent > 0) {
             $vatPercent = $this->captain->organizer->countryData->vat_percent / 100;
             $vatPrice = $totalExcludingTax * $vatPercent;
         }
@@ -311,27 +263,20 @@ class Reservation extends Model
         $formattedExtraProducts = [];
         $totalForExtra = 0;
 
-        foreach ($extraProducts as $extraProduct) 
-        {
-            $unitPrice = (int)$extraProduct->interval->price;
+        foreach ($extraProducts as $extraProduct) {
+            $unitPrice = (int) $extraProduct->interval->price;
 
-            if ($this->promo_code && $promoCode->promo_type_id == 3) 
-            {
-                if ($extraProduct->amount <= $promoCode->amount) 
-                {
+            if ($this->promo_code && $promoCode->promo_type_id == 3) {
+                if ($extraProduct->amount <= $promoCode->amount) {
                     $unitPrice = 0;
-                } 
-                else 
-                {
-                    $unitPrice = (int)$extraProduct->interval->price / $extraProduct->amount;
+                } else {
+                    $unitPrice = (int) $extraProduct->interval->price / $extraProduct->amount;
                 }
 
-                $total = $extraProduct->amount * (int)$unitPrice;
+                $total = $extraProduct->amount * (int) $unitPrice;
 
-            } 
-            else 
-            {
-                $total = $extraProduct->amount * (int)$extraProduct->interval->price;
+            } else {
+                $total = $extraProduct->amount * (int) $extraProduct->interval->price;
             }
 
             $totalForExtra += $total;
@@ -342,7 +287,7 @@ class Reservation extends Model
                 'amount' => $extraProduct->amount,
                 'price' => $unitPrice,
                 'name' => $extraProduct->inventory->name,
-                'originalPrice' => (int)$extraProduct->interval->price
+                'originalPrice' => (int) $extraProduct->interval->price,
             ];
         }
 
@@ -353,16 +298,16 @@ class Reservation extends Model
             'totalSale' => $totalSale,
             'vatPrice' => $vatPrice,
             'extraProduct' => $formattedExtraProducts ? $formattedExtraProducts : null,
-            'unitPrice' =>   isset($this->interval()->price) ? (int)$this->interval()->price : null,
-            'totalForExtra' => $totalForExtra
+            'unitPrice' => isset($this->interval()->price) ? (int) $this->interval()->price : null,
+            'totalForExtra' => $totalForExtra,
         ];
     }
 
     public function promoCode()
     {
-        return PromoCode::where([['promo_code', $this->promo_code],['race_id', $this->race_id]])->first();
+        return PromoCode::where([['promo_code', $this->promo_code], ['race_id', $this->race_id]])->first();
     }
-    
+
     public function setLockedDateAttribute($value)
     {
         $this->attributes['locked_date'] = $value === '' ? null : $value;

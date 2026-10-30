@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources\PL;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\PL\PodatakResource as PLPodatakResource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class GrupaResource extends JsonResource
 {
@@ -17,9 +17,9 @@ class GrupaResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'podatak' => $this->podatak ? 
+            'podatak' => $this->podatak ?
             PLPodatakResource::collection(collect($this->podatak))
-            : null
+            : null,
         ];
     }
 }

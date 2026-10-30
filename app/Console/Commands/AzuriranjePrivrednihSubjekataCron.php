@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\Captain;
-use Carbon\Carbon;
 use App\Services\AzuriranjePrivrednihSubjekataService;
+use Illuminate\Console\Command;
 
 class AzuriranjePrivrednihSubjekataCron extends Command
 {
@@ -24,25 +22,16 @@ class AzuriranjePrivrednihSubjekataCron extends Command
     protected $description = 'Command description';
 
     public AzuriranjePrivrednihSubjekataService $azuriranjeService;
-    
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct(AzuriranjePrivrednihSubjekataService $azuriranjeService)
-    {
-        parent::__construct();
-        $this->azuriranjeService = $azuriranjeService;
-    }
 
     /**
      * Execute the console command.
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(AzuriranjePrivrednihSubjekataService $azuriranjeService)
     {
+        $this->azuriranjeService = $azuriranjeService;
+
         $this->azuriranjeService->update();
     }
 }

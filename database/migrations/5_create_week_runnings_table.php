@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('week_runnings', function (Blueprint $table) {
             $table->id();
             $table->string('week_running_name');
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers');   
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers');
             $table->timestamps();
             $table->softDeletes();
         });

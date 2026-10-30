@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('city');
             $table->string('postcode');
             $table->string('country')->nullable();
-            $table->foreignId('country_data_id')->nullable()->constrained('country_datas');               
+            $table->foreignId('country_data_id')->nullable()->constrained('country_datas');
             $table->string('phone');
             $table->string('email')->unique();
             $table->string('website');
@@ -35,8 +35,8 @@ return new class extends Migration
             $table->string('logo')->nullable()->default(null);
             $table->string('invoice_signature')->nullable()->default(null);
             $table->string('logo_alt')->nullable()->default(null);
-            $table->foreignId('user_id')->constrained('users');  
-            $table->char('language', 3)->nullable();     
+            $table->foreignId('user_id')->constrained('users');
+            $table->char('language', 3)->nullable();
             $table->string('remember_token')->nullable();
             $table->timestamps();
             $table->softDeletes();

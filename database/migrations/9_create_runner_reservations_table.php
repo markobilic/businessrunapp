@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('runner_reservations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('runner_id')->nullable()->constrained('runners');   
-            $table->foreignId('reservation_id')->constrained('reservations');   
+            $table->foreignId('runner_id')->nullable()->constrained('runners');
+            $table->foreignId('reservation_id')->constrained('reservations');
             $table->integer('spot')->nullable();
             $table->timestamps();
         });

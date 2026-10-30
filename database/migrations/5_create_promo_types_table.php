@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('promo_types', function (Blueprint $table) {
             $table->id();
             $table->string('promo_type_name');
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers');   
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers');
             $table->timestamps();
             $table->softDeletes();
         });

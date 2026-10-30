@@ -1,26 +1,25 @@
 <?php
-namespace App\PL\Test;
 
+namespace App\PL\Test;
 
 class Grupa
 {
-
     /**
-     * @var Podatak[] $podatak
+     * @var Podatak[]
      */
     protected $podatak = null;
 
     /**
-     * @var string $id
+     * @var string
      */
     protected $id = null;
 
     /**
-     * @param string $id
+     * @param  string  $id
      */
     public function __construct($id)
     {
-      $this->id = $id;
+        $this->id = $id;
     }
 
     /**
@@ -28,17 +27,18 @@ class Grupa
      */
     public function getPodatak()
     {
-      return $this->podatak;
+        return $this->podatak;
     }
 
     /**
-     * @param Podatak[] $podatak
+     * @param  Podatak[]  $podatak
      * @return Grupa
      */
-    public function setPodatak(array $podatak = null)
+    public function setPodatak(?array $podatak = null)
     {
-      $this->podatak = $podatak;
-      return $this;
+        $this->podatak = $podatak;
+
+        return $this;
     }
 
     /**
@@ -46,17 +46,17 @@ class Grupa
      */
     public function getId()
     {
-      return $this->id;
+        return $this->id;
     }
 
     /**
-     * @param string $id
+     * @param  string  $id
      * @return Grupa
      */
     public function setId($id)
     {
-      $this->id = $id;
-      return $this;
-    }
+        $this->id = $id;
 
+        return $this;
+    }
 }

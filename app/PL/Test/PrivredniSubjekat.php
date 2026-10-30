@@ -4,30 +4,29 @@ namespace App\PL\Test;
 
 class PrivredniSubjekat
 {
-
     /**
-     * @var Grupa[] $grupa
+     * @var Grupa[]
      */
     protected $grupa = null;
 
     /**
-     * @var PrivredniSubjekatMaticniBrojTip $tip
+     * @var PrivredniSubjekatMaticniBrojTip
      */
     protected $tip = null;
 
     /**
-     * @var string $maticniBroj
+     * @var string
      */
     protected $maticniBroj = null;
 
     /**
-     * @param PrivredniSubjekatMaticniBrojTip $tip
-     * @param string $maticniBroj
+     * @param  PrivredniSubjekatMaticniBrojTip  $tip
+     * @param  string  $maticniBroj
      */
     public function __construct($tip, $maticniBroj)
     {
-      $this->tip = $tip;
-      $this->maticniBroj = $maticniBroj;
+        $this->tip = $tip;
+        $this->maticniBroj = $maticniBroj;
     }
 
     /**
@@ -35,17 +34,18 @@ class PrivredniSubjekat
      */
     public function getGrupa()
     {
-      return $this->grupa;
+        return $this->grupa;
     }
 
     /**
-     * @param Grupa[] $grupa
+     * @param  Grupa[]  $grupa
      * @return PrivredniSubjekat
      */
-    public function setGrupa(array $grupa = null)
+    public function setGrupa(?array $grupa = null)
     {
-      $this->grupa = $grupa;
-      return $this;
+        $this->grupa = $grupa;
+
+        return $this;
     }
 
     /**
@@ -53,17 +53,18 @@ class PrivredniSubjekat
      */
     public function getTip()
     {
-      return $this->tip;
+        return $this->tip;
     }
 
     /**
-     * @param PrivredniSubjekatMaticniBrojTip $tip
+     * @param  PrivredniSubjekatMaticniBrojTip  $tip
      * @return PrivredniSubjekat
      */
     public function setTip($tip)
     {
-      $this->tip = $tip;
-      return $this;
+        $this->tip = $tip;
+
+        return $this;
     }
 
     /**
@@ -71,17 +72,17 @@ class PrivredniSubjekat
      */
     public function getMaticniBroj()
     {
-      return $this->maticniBroj;
+        return $this->maticniBroj;
     }
 
     /**
-     * @param string $maticniBroj
+     * @param  string  $maticniBroj
      * @return PrivredniSubjekat
      */
     public function setMaticniBroj($maticniBroj)
     {
-      $this->maticniBroj = $maticniBroj;
-      return $this;
-    }
+        $this->maticniBroj = $maticniBroj;
 
+        return $this;
+    }
 }

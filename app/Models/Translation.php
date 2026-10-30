@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Organizer;
 
 class Translation extends Model
 {
@@ -24,7 +23,7 @@ class Translation extends Model
         'srb',
         'mon',
         'cro',
-        'alb'
+        'alb',
     ];
 
     public function organizer()

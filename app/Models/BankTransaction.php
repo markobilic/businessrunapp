@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Reservation;
-use App\Models\Organizer;
-use App\Models\KancelarkaResponse;
-use Carbon\Carbon;
 
 class BankTransaction extends Model
 {
@@ -42,7 +39,7 @@ class BankTransaction extends Model
         'datum_izvoda',
         'approved',
         'reservation_id',
-        'organizer_id'
+        'organizer_id',
     ];
 
     public function reservation()

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('billing_templates', function (Blueprint $table) {
             $table->id();
-            $table->string('template_type')->nullable();  
+            $table->string('template_type')->nullable();
             $table->foreignId('template_type_id')->nullable()->constrained('template_types');
-            $table->string('template_name');  
+            $table->string('template_name');
             $table->longText('template_content');
             $table->foreignId('organizer_id')->constrained('organizers');
             $table->timestamps();

@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('captain_addresses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('captain_id')->constrained('captains');   
+            $table->foreignId('captain_id')->constrained('captains');
             $table->string('company_name');
             $table->string('city');
-            $table->string('address');   
-            $table->string('postal_code');        
+            $table->string('address');
+            $table->string('postal_code');
             $table->string('phone_number');
             $table->string('pin');
             $table->string('jbkjs')->default(null)->nullable();
-            $table->string('identification_number');            
+            $table->string('identification_number');
             $table->timestamps();
             $table->softDeletes();
         });

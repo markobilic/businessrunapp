@@ -13,8 +13,8 @@ return Artisan::resolveCommands([
 */
 
 // 🕒 Schedule the commands:
-//Schedule::command('endOfInterval:cron')->dailyAt('14:00');
-//Schedule::command('changeOfIntervals:cron')->dailyAt('12:00');
+// Schedule::command('endOfInterval:cron')->dailyAt('14:00');
+// Schedule::command('changeOfIntervals:cron')->dailyAt('12:00');
 
 // Optional/Commented (Uncomment if needed)
 // Schedule::command('freeSpots:cron')->dailyAt('08:00');

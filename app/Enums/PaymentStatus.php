@@ -1,17 +1,18 @@
 <?php
+
 namespace App\Enums;
 
 enum PaymentStatus: int
 {
-    case UNPAID           = 0;
-    case PAID             = 1;
-    case PARTIALLY_PAID   = 2;
+    case UNPAID = 0;
+    case PAID = 1;
+    case PARTIALLY_PAID = 2;
 
     public function label(): string
     {
-        return match($this) {
-            self::UNPAID         => __('Unpaid'),
-            self::PAID           => __('Paid'),
+        return match ($this) {
+            self::UNPAID => __('Unpaid'),
+            self::PAID => __('Paid'),
             self::PARTIALLY_PAID => __('Partially paid'),
         };
     }

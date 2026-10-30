@@ -1,85 +1,82 @@
 <?php
+
 namespace App\PL\Test;
 
-class ArrayOfPrivredniSubjekat implements \ArrayAccess, \Iterator, \Countable
+class ArrayOfPrivredniSubjekat implements \ArrayAccess, \Countable, \Iterator
 {
-
     /**
-     * @var PrivredniSubjekat[] $PrivredniSubjekat
+     * @var PrivredniSubjekat[]
      */
     protected $PrivredniSubjekat = null;
 
-    
-    public function __construct()
-    {
-    
-    }
+    public function __construct() {}
 
     /**
      * @return PrivredniSubjekat[]
      */
     public function getPrivredniSubjekat()
     {
-      return $this->PrivredniSubjekat;
+        return $this->PrivredniSubjekat;
     }
 
     /**
-     * @param PrivredniSubjekat[] $PrivredniSubjekat
+     * @param  PrivredniSubjekat[]  $PrivredniSubjekat
      * @return ArrayOfPrivredniSubjekat
      */
-    public function setPrivredniSubjekat(array $PrivredniSubjekat = null)
+    public function setPrivredniSubjekat(?array $PrivredniSubjekat = null)
     {
-      $this->PrivredniSubjekat = $PrivredniSubjekat;
-      return $this;
+        $this->PrivredniSubjekat = $PrivredniSubjekat;
+
+        return $this;
     }
 
     /**
      * ArrayAccess implementation
      *
-     * @param mixed $offset An offset to check for
-     * @return boolean true on success or false on failure
+     * @param  mixed  $offset  An offset to check for
+     * @return bool true on success or false on failure
      */
     public function offsetExists($offset)
     {
-      return isset($this->PrivredniSubjekat[$offset]);
+        return isset($this->PrivredniSubjekat[$offset]);
     }
 
     /**
      * ArrayAccess implementation
      *
-     * @param mixed $offset The offset to retrieve
+     * @param  mixed  $offset  The offset to retrieve
      * @return PrivredniSubjekat
      */
     public function offsetGet($offset)
     {
-      return $this->PrivredniSubjekat[$offset];
+        return $this->PrivredniSubjekat[$offset];
     }
 
     /**
      * ArrayAccess implementation
      *
-     * @param mixed $offset The offset to assign the value to
-     * @param PrivredniSubjekat $value The value to set
+     * @param  mixed  $offset  The offset to assign the value to
+     * @param  PrivredniSubjekat  $value  The value to set
      * @return void
      */
     public function offsetSet($offset, $value)
     {
-      if (!isset($offset)) {
-        $this->PrivredniSubjekat[] = $value;
-      } else {
-        $this->PrivredniSubjekat[$offset] = $value;
-      }
+        if (! isset($offset)) {
+            $this->PrivredniSubjekat[] = $value;
+        } else {
+            $this->PrivredniSubjekat[$offset] = $value;
+        }
     }
 
     /**
      * ArrayAccess implementation
      *
-     * @param mixed $offset The offset to unset
+     * @param  mixed  $offset  The offset to unset
      * @return void
      */
     public function offsetUnset($offset)
     {
-      unset($this->PrivredniSubjekat[$offset]);
+        unset($this->PrivredniSubjekat[$offset]);
     }
 
     /**
@@ -89,7 +86,7 @@ class ArrayOfPrivredniSubjekat implements \ArrayAccess, \Iterator, \Countable
      */
     public function current()
     {
-      return current($this->PrivredniSubjekat);
+        return current($this->PrivredniSubjekat);
     }
 
     /**
@@ -100,7 +97,7 @@ class ArrayOfPrivredniSubjekat implements \ArrayAccess, \Iterator, \Countable
      */
     public function next()
     {
-      next($this->PrivredniSubjekat);
+        next($this->PrivredniSubjekat);
     }
 
     /**
@@ -110,17 +107,17 @@ class ArrayOfPrivredniSubjekat implements \ArrayAccess, \Iterator, \Countable
      */
     public function key()
     {
-      return key($this->PrivredniSubjekat);
+        return key($this->PrivredniSubjekat);
     }
 
     /**
      * Iterator implementation
      *
-     * @return boolean Return the validity of the current position
+     * @return bool Return the validity of the current position
      */
     public function valid()
     {
-      return $this->key() !== null;
+        return $this->key() !== null;
     }
 
     /**
@@ -131,7 +128,7 @@ class ArrayOfPrivredniSubjekat implements \ArrayAccess, \Iterator, \Countable
      */
     public function rewind()
     {
-      reset($this->PrivredniSubjekat);
+        reset($this->PrivredniSubjekat);
     }
 
     /**
@@ -141,7 +138,6 @@ class ArrayOfPrivredniSubjekat implements \ArrayAccess, \Iterator, \Countable
      */
     public function count()
     {
-      return count($this->PrivredniSubjekat);
+        return count($this->PrivredniSubjekat);
     }
-
 }

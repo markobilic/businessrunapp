@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\PromoCode;
 
 class PromoCodeCondition extends Model
 {
@@ -20,7 +19,7 @@ class PromoCodeCondition extends Model
         'promo_code_id',
         'sponsor',
         'partner',
-        'min_runners'
+        'min_runners',
     ];
 
     public function promoCode()

@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Organizer;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use App\Models\Organizer;
 use Illuminate\Support\Facades\App;
+use Symfony\Component\HttpFoundation\Response;
 
 class OrganizerSubdomain
 {
@@ -17,8 +17,8 @@ class OrganizerSubdomain
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $host = $request->getHost(); 
-        $parts = explode('.', $host); 
+        $host = $request->getHost();
+        $parts = explode('.', $host);
 
         if (count($parts) < 3) {
             // That likely means there's no subdomain, or it's something like 'localhost'
@@ -40,14 +40,11 @@ class OrganizerSubdomain
         // Option 1: store in request attribute
         $request->attributes->set('current_organizer', $organizer);
 
-        if ($organizer && $organizer->countryData && $organizer->countryData->language) 
-        {
+        if ($organizer && $organizer->countryData && $organizer->countryData->language) {
             App::setLocale($organizer->countryData->language);
-        } 
-        else 
-        {
+        } else {
             // optional: set a default fallback locale if no organizer or language found
-            App::setLocale(config('app.locale')); 
+            App::setLocale(config('app.locale'));
         }
 
         // Option 2: bind globally (e.g. service container singleton)

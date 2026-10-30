@@ -1,14 +1,8 @@
 <?php
-namespace App\PL\Test;
 
+namespace App\PL\Test;
 
 class SviPodaciOTipovimaFunkcijeZastupnikaZaduzbineIliFondacije
 {
-
-    
-    public function __construct()
-    {
-    
-    }
-
+    public function __construct() {}
 }

@@ -1,14 +1,8 @@
 <?php
-namespace App\PL\Production;
 
+namespace App\PL\Production;
 
 class SviPodaciOTipovimaKapitalaZaduzbineIliFondacije
 {
-
-    
-    public function __construct()
-    {
-    
-    }
-
+    public function __construct() {}
 }

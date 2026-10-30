@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources\PL;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\PL\GrupaResource as PLGrupaResource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class PrivredniSubjekatResource extends JsonResource
 {
@@ -18,9 +18,9 @@ class PrivredniSubjekatResource extends JsonResource
         return [
             'tip' => $this->tip,
             'maticniBroj' => $this->maticniBroj,
-            'grupa' => $this->grupa ? 
+            'grupa' => $this->grupa ?
             PLGrupaResource::collection(collect($this->grupa))
-            : null
+            : null,
         ];
     }
 }

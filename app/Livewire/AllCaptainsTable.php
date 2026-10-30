@@ -3,59 +3,60 @@
 namespace App\Livewire;
 
 use App\Models\Captain;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
-use PowerComponents\LivewirePowerGrid\PowerGridComponent;
-use PowerComponents\LivewirePowerGrid\Facades\PowerGrid; 
-use PowerComponents\LivewirePowerGrid\Traits\WithExport;
-use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable; 
-use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Facades\Filter;
-use PowerComponents\LivewirePowerGrid\Footer;
-use PowerComponents\LivewirePowerGrid\Header;
+use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
+use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
-use PowerComponents\LivewirePowerGrid\Facades\Rule;
-use Carbon\Carbon;
+use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
 final class AllCaptainsTable extends PowerGridComponent
 {
     use WithExport;
 
     public int $perPage = 25;
-    public array $perPageValues = [0, 10, 25, 50, 100];
-    public string $primaryKey = 'id';
-    public string $sortField = 'reserved_places';
-    public string $sortDirection = 'desc';
-    public bool $withSortStringNumber = false;
-    public bool $showFilters = true;
-    public string $tableName = 'allCaptainsTable';
-    public ?int $year = null;
-    public ?int $raceId = null;
-    public int $page;
 
+    public array $perPageValues = [0, 10, 25, 50, 100];
+
+    public string $primaryKey = 'id';
+
+    public string $sortField = 'reserved_places';
+
+    public string $sortDirection = 'desc';
+
+    public bool $withSortStringNumber = false;
+
+    public bool $showFilters = true;
+
+    public string $tableName = 'allCaptainsTable';
+
+    public ?int $year = null;
+
+    public ?int $raceId = null;
+
+    public int $page;
 
     public bool $hideRace = false;
 
     public function boot(): void
     {
-        if($this->raceId)
-        {
+        if ($this->raceId) {
             $this->hideRace = true;
         }
-        
+
         config(['livewire-powergrid.filter' => 'inline']);
     }
 
     public function setUp(): array
     {
-        return [          
+        return [
             PowerGrid::header()
                 ->showSearchInput(),
             PowerGrid::footer()
                 ->showPerPage($this->perPage, $this->perPageValues)
                 ->showRecordCount(mode: 'full')
-                ->pageName('allCaptainsPage'), 
+                ->pageName('allCaptainsPage'),
         ];
     }
 
@@ -87,16 +88,16 @@ final class AllCaptainsTable extends PowerGridComponent
             ->with([
                 'reservations' => function ($q) {
                     $q->orderBy('created_at', 'desc')
-                    ->when($this->raceId, function ($q) {
-                        $q->where('race_id', $this->raceId);
-                    })
-                    ->when($this->year, function ($q) {
-                        $q->whereHas('race', function ($r) {
-                            $r->whereYear('starting_date', $this->year);
-                        });
-                    })
-                    ->with('runnerReservations', 'race');
-                }
+                        ->when($this->raceId, function ($q) {
+                            $q->where('race_id', $this->raceId);
+                        })
+                        ->when($this->year, function ($q) {
+                            $q->whereHas('race', function ($r) {
+                                $r->whereYear('starting_date', $this->year);
+                            });
+                        })
+                        ->with('runnerReservations', 'race');
+                },
             ])
             ->get();
 
@@ -112,24 +113,24 @@ final class AllCaptainsTable extends PowerGridComponent
                         ->where('runner_id', '>', 0)
                         ->count();
                 }, 0);
-        
+
                 $raceName = optional($reservations->first()->race)->location;
-        
+
                 return [
-                    'id'               => $captain->id,
-                    'company_name'     => $captain->company_name,
-                    'race_name'        => $raceName,
-                    'reserved_places'  => $reservedSum,
-                    'applied_places'   => $appliedSum,
+                    'id' => $captain->id,
+                    'company_name' => $captain->company_name,
+                    'race_name' => $raceName,
+                    'reserved_places' => $reservedSum,
+                    'applied_places' => $appliedSum,
                 ];
             });
         })
-        ->sortByDesc('reserved_places')
-        ->values();
+            ->sortByDesc('reserved_places')
+            ->values();
 
         $rows = $rows->map(function ($item, $index) {
             $item['no'] = $index + 1;
-            $item['captain_no'] = '#' . $item['no'];
+            $item['captain_no'] = '#'.$item['no'];
 
             return $item;
         });
@@ -145,14 +146,14 @@ final class AllCaptainsTable extends PowerGridComponent
 
     public function header(): array
     {
-        return [            
-        ];    
+        return [
+        ];
     }
 
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('id')            
+            ->add('id')
             ->add('captain_no')
             ->add('no')
             ->add('race_name')
@@ -167,7 +168,7 @@ final class AllCaptainsTable extends PowerGridComponent
             Column::add()
                 ->title(__('ID'))
                 ->field('id')
-                ->hidden( isHidden:true, isForceHidden:true ),
+                ->hidden(isHidden: true, isForceHidden: true),
             Column::add()
                 ->title(__('No.'))
                 ->field('captain_no', 'no')
@@ -178,22 +179,22 @@ final class AllCaptainsTable extends PowerGridComponent
                 ->field('race_name')
                 ->sortable()
                 ->searchable()
-                ->hidden( isHidden: $this->hideRace ), 
+                ->hidden(isHidden: $this->hideRace),
             Column::add()
                 ->title(__('Company name'))
                 ->field('company_name')
                 ->sortable()
-                ->searchable(),  
+                ->searchable(),
             Column::add()
                 ->title(__('Applied places'))
                 ->field('applied_places')
                 ->sortable()
-                ->searchable(), 
+                ->searchable(),
             Column::add()
                 ->title(__('Reserved places'))
                 ->field('reserved_places')
                 ->sortable()
-                ->searchable()
+                ->searchable(),
         ];
     }
 

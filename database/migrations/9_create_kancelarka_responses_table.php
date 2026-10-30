@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->longText('sent_data');
             $table->longText('response');
-            $table->foreignId('reservation_id')->constrained('reservations');   
-            $table->foreignId('bank_transaction_id')->nullable()->constrained('bank_transactions');  
+            $table->foreignId('reservation_id')->constrained('reservations');
+            $table->foreignId('bank_transaction_id')->nullable()->constrained('bank_transactions');
             $table->timestamps();
             $table->softDeletes();
         });

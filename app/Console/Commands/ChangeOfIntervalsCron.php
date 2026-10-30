@@ -26,31 +26,22 @@ class ChangeOfIntervalsCron extends Command
      */
     protected $description = 'Command description';
 
-
     public MailService $mailService;
+
     public ExportService $exportService;
-    
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct(MailService $mailService, ExportService $exportService)
-    {
-        parent::__construct();
-        $this->mailService = $mailService;
-        $this->exportService = $exportService;
-    }
 
     /**
      * Execute the console command.
      *
      * @return mixed
      */
-      ///ZAVRŠAVA ZA 3DANA
+    // /ZAVRŠAVA ZA 3DANA
 
-    public function handle()
+    public function handle(MailService $mailService, ExportService $exportService)
     {
+        $this->mailService = $mailService;
+        $this->exportService = $exportService;
+
         $today = Carbon::now();
 
         $races = Race::where('application_end', '>=', $today)
@@ -58,21 +49,17 @@ class ChangeOfIntervalsCron extends Command
                 $q->whereHas('inventoryType', function ($typeQuery) {
                     $typeQuery->where('inventory_type_name', 'Akontacija');
                 })
-                ->with('inventoryIntervals');
+                    ->with('inventoryIntervals');
             }])
             ->get();
 
-        foreach ($races as $race) 
-        {
-            foreach ($race->inventories as $inventory) 
-            {
+        foreach ($races as $race) {
+            foreach ($race->inventories as $inventory) {
                 $sortedInventory = $inventory->inventoryIntervals->sortBy('start_date');
                 $inThreeDays = Carbon::parse($today)->addDays(3)->toDateString();
 
-                foreach ($sortedInventory as $sorted) 
-                {
-                    if (Carbon::parse($sorted->end_date)->toDateString() == $inThreeDays) 
-                    {
+                foreach ($sortedInventory as $sorted) {
+                    if (Carbon::parse($sorted->end_date)->toDateString() == $inThreeDays) {
                         $diffInDays = 3;
                         $unpaidReservations = Reservation::where([
                             ['race_id', $race->id],
@@ -81,8 +68,7 @@ class ChangeOfIntervalsCron extends Command
                         ])
                             ->get();
 
-                        foreach ($unpaidReservations as $unpaidReservation) 
-                        {
+                        foreach ($unpaidReservations as $unpaidReservation) {
                             $captain = Captain::where('id', $unpaidReservation->captain_id)->first();
                             $this->mailService->sendIntervalEndingEmail($captain, $diffInDays, $race->name);
                         }

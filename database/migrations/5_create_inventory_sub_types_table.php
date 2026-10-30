@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('inventory_sub_types', function (Blueprint $table) {
             $table->id();
             $table->string('inventory_sub_type_name');
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers');   
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -1,37 +1,32 @@
 <?php
-namespace App\PL\Production;
 
+namespace App\PL\Production;
 
 class Zapis
 {
-
     /**
-     * @var Podatak[] $podatak
+     * @var Podatak[]
      */
     protected $podatak = null;
 
-    
-    public function __construct()
-    {
-    
-    }
+    public function __construct() {}
 
     /**
      * @return Podatak[]
      */
     public function getPodatak()
     {
-      return $this->podatak;
+        return $this->podatak;
     }
 
     /**
-     * @param Podatak[] $podatak
+     * @param  Podatak[]  $podatak
      * @return Zapis
      */
-    public function setPodatak(array $podatak = null)
+    public function setPodatak(?array $podatak = null)
     {
-      $this->podatak = $podatak;
-      return $this;
-    }
+        $this->podatak = $podatak;
 
+        return $this;
+    }
 }

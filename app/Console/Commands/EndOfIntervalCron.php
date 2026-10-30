@@ -2,13 +2,13 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Captain;
 use App\Models\Race;
 use App\Models\Reservation;
+use App\Services\ExportService;
 use App\Services\MailService;
 use Carbon\Carbon;
-use App\Services\ExportService;
+use Illuminate\Console\Command;
 
 class EndOfIntervalCron extends Command
 {
@@ -27,27 +27,19 @@ class EndOfIntervalCron extends Command
     protected $description = 'Command description';
 
     public MailService $mailService;
+
     public ExportService $exportService;
-    
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct(MailService $mailService, ExportService $exportService)
-    {
-        parent::__construct();
-        $this->mailService = $mailService;
-        $this->exportService = $exportService;
-    }
 
     /**
      * Execute the console command.
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(MailService $mailService, ExportService $exportService)
     {
+        $this->mailService = $mailService;
+        $this->exportService = $exportService;
+
         $today = Carbon::now();
         $yesterday = Carbon::parse($today)->subDays(1)->toDateString();
 
@@ -55,8 +47,7 @@ class EndOfIntervalCron extends Command
             ['application_end', '>=', $today],
         ])->get();
 
-        foreach ($races as $race) 
-        {
+        foreach ($races as $race) {
             $inventory = $race->inventories()
                 ->whereHas('inventoryType', function ($query) {
                     $query->where('inventory_type_name', 'Akontacija');
@@ -66,23 +57,19 @@ class EndOfIntervalCron extends Command
                 ->orderBy('inventory_intervals_min_start_date', 'ASC')
                 ->first();
 
-            if($inventory)
-            {
-                foreach ($inventory->inventoryIntervals as $ii) 
-                {
-                    if (Carbon::parse($ii->end_date)->toDateString() == $yesterday) 
-                    {                
+            if ($inventory) {
+                foreach ($inventory->inventoryIntervals as $ii) {
+                    if (Carbon::parse($ii->end_date)->toDateString() == $yesterday) {
                         $unpaidReservations = Reservation::where([
                             ['race_id', $race->id],
                             ['payment_status', 0],
                             ['locked', 0],
                         ])
-                        ->get();
-    
-                        foreach ($unpaidReservations as $unpaidReservation) 
-                        {
+                            ->get();
+
+                        foreach ($unpaidReservations as $unpaidReservation) {
                             $captain = Captain::where('id', $unpaidReservation->captain_id)->first();
-    
+
                             $template = $this->mailService->getRightTemplate($captain->organizer_id, 'send-invoice');
                             $encode = json_decode($template->content);
                             $data['title'] = $encode->title;

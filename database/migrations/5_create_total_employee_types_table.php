@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('total_employee_type_name');
             $table->integer('min_employee');
             $table->integer('max_employee');
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers');   
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers');
             $table->timestamps();
             $table->softDeletes();
         });

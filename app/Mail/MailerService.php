@@ -5,7 +5,6 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class MailerService extends Mailable
 {
@@ -14,11 +13,17 @@ class MailerService extends Mailable
     public $theme = 'businessrun';
 
     public $params;
+
     public $subject;
+
     public $fromEmail;
+
     public $fromName;
+
     public $template;
+
     public $template_type;
+
     public $data;
 
     /**
@@ -45,24 +50,19 @@ class MailerService extends Mailable
      */
     public function build()
     {
-        if ($this->template_type == 'view' && !$this->pdf) 
-        {
+        if ($this->template_type == 'view' && ! $this->pdf) {
             return $this->view($this->template)
                 ->from($this->from_email, $this->from_name)
                 ->with('data', $this->data);
-        }
-        else if($this->template_type == 'view' && $this->pdf) 
-        {
+        } elseif ($this->template_type == 'view' && $this->pdf) {
             return $this->view($this->template)
                 ->from($this->from_email, $this->from_name)
                 ->with('data', $this->data)
-                ->attach(storage_path('app/public/' . $this->pdf), [
+                ->attach(storage_path('app/public/'.$this->pdf), [
                     'as' => 'invoice.pdf',
                     'mime' => 'application/pdf',
                 ]);
-        } 
-        else 
-        {
+        } else {
             return $this->markdown($this->template)
                 ->from($this->from_email, $this->from_name)
                 ->with('data', $this->data)

@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reservation_id')->constrained('reservations');   
-            $table->foreignId('inventory_id')->constrained('inventories'); 
-            $table->integer('quantity');  
+            $table->foreignId('reservation_id')->constrained('reservations');
+            $table->foreignId('inventory_id')->constrained('inventories');
+            $table->integer('quantity');
             $table->timestamps();
         });
     }

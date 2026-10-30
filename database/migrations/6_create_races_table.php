@@ -23,7 +23,7 @@ return new class extends Migration
             $table->dateTime('starting_date');
             $table->dateTime('application_start');
             $table->dateTime('application_end');
-            $table->dateTime('order_end')->nullable()->default(null);      
+            $table->dateTime('order_end')->nullable()->default(null);
             $table->foreignId('organizer_id')->constrained('organizers');
             $table->foreignId('user_id')->constrained('users');
             $table->boolean('locked')->default(false);

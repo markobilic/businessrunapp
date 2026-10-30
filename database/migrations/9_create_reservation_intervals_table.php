@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('reservation_intervals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reservation_id')->constrained('reservations');   
-            $table->foreignId('inventory_id')->constrained('inventories');   
+            $table->foreignId('reservation_id')->constrained('reservations');
+            $table->foreignId('inventory_id')->constrained('inventories');
             $table->integer('amount');
             $table->timestamps();
         });

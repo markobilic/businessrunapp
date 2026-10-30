@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('long_name');
             $table->string('currency')->nullable()->default(null);
             $table->string('vat_label')->nullable()->default(null);
-            $table->string('vat_percent')->nullable()->default(null);        
-            $table->string('language');           
+            $table->string('vat_percent')->nullable()->default(null);
+            $table->string('language');
             $table->timestamps();
             $table->softDeletes();
         });

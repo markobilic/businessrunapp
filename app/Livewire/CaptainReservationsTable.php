@@ -2,38 +2,46 @@
 
 namespace App\Livewire;
 
-use App\Models\Reservation;
 use App\Models\PromoCode;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Reservation;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use PowerComponents\LivewirePowerGrid\PowerGridComponent;
-use PowerComponents\LivewirePowerGrid\Facades\PowerGrid; 
-use PowerComponents\LivewirePowerGrid\Traits\WithExport;
-use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable; 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Number;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
+use PowerComponents\LivewirePowerGrid\Components\SetUp\Exportable;
 use PowerComponents\LivewirePowerGrid\Facades\Filter;
-use PowerComponents\LivewirePowerGrid\Footer;
-use PowerComponents\LivewirePowerGrid\Header;
-use PowerComponents\LivewirePowerGrid\PowerGridFields;
+use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
 use PowerComponents\LivewirePowerGrid\Facades\Rule;
-use Carbon\Carbon;
-use Illuminate\Support\Number;
+use PowerComponents\LivewirePowerGrid\PowerGridComponent;
+use PowerComponents\LivewirePowerGrid\PowerGridFields;
+use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
 final class CaptainReservationsTable extends PowerGridComponent
 {
     use WithExport;
 
     public int $perPage = 25;
+
     public array $perPageValues = [0, 10, 25, 50, 100];
+
     public string $primaryKey = 'id';
+
     public string $sortField = 'id';
+
     public string $sortDirection = 'desc';
+
     public bool $withSortStringNumber = false;
+
     public bool $showFilters = true;
+
     public string $tableName = 'captainReservationsTable';
+
     public bool $showExporting = true;
+
     public ?int $captainId = null;
+
     public int $page;
 
     public function boot(): void
@@ -44,13 +52,13 @@ final class CaptainReservationsTable extends PowerGridComponent
     public function setUp(): array
     {
         $this->persist(
-            tableItems: ['filters', 'sorting'], 
-            prefix: Auth::id() . ':v2'
-        );  
+            tableItems: ['filters', 'sorting'],
+            prefix: Auth::id().':v2'
+        );
 
         return [
             PowerGrid::exportable(fileName: 'captain-reservations-export-file')
-                ->csvSeparator(separator: ',') 
+                ->csvSeparator(separator: ',')
                 ->csvDelimiter(delimiter: "'")
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
             PowerGrid::header()
@@ -58,7 +66,7 @@ final class CaptainReservationsTable extends PowerGridComponent
             PowerGrid::footer()
                 ->showPerPage($this->perPage, $this->perPageValues)
                 ->showRecordCount(mode: 'full')
-                ->pageName('captainReservationsPage'), 
+                ->pageName('captainReservationsPage'),
         ];
     }
 
@@ -76,41 +84,41 @@ final class CaptainReservationsTable extends PowerGridComponent
         $currentOrganizer = request()->attributes->get('current_organizer');
 
         $query = Reservation::with([
-                'race', 
-                'captain', 
-                'captainAddress',
-                'reservationIntervals.inventory.inventoryIntervals',
-                'runnerReservations',
-            ])     
+            'race',
+            'captain',
+            'captainAddress',
+            'reservationIntervals.inventory.inventoryIntervals',
+            'runnerReservations',
+        ])
             ->where('captain_id', '=', $this->captainId)
-            ->when($currentOrganizer, fn($q) => $q->whereHas('race', fn($q2) => $q2->where('organizer_id', $currentOrganizer->id)))
+            ->when($currentOrganizer, fn ($q) => $q->whereHas('race', fn ($q2) => $q2->where('organizer_id', $currentOrganizer->id)))
             ->whereHas('captain')
             ->orderBy('created_at', 'DESC');
-    
+
         $query->withCount(['runnerReservations as runners_count' => function ($q) {
             $q->whereNotNull('runner_id')->where('runner_id', '>', 0);
         }]);
-    
+
         $reservations = $query->get();
-        
+
         $reservations = $reservations->map(function ($reservation) {
             $reservation->reservation_date = $reservation->created_at->format('d.m.Y.');
-            $reservation->reservation_no   = '#' . $reservation->id;
+            $reservation->reservation_no = '#'.$reservation->id;
 
             $reservation->company = optional($reservation->captain)->company_name;
-			
+
             $reservation->billing_company = $reservation->captainAddress
                 ? $reservation->captainAddress->company_name
                 : optional($reservation->captain)->billing_company;
-    
+
             $reservation->reserved = $reservation->reserved_places ?? 0;
             $reservation->registered = $reservation->runners_count ?? 0;
-            $reservation->total_runners = $reservation->registered . " / " . $reservation->reserved;
+            $reservation->total_runners = $reservation->registered.' / '.$reservation->reserved;
             $reservation->race_name = optional($reservation->race)->location;
             $reservation->is_locked = $reservation->locked > 0;
 
             $reservation->total_price = $this->calculateTotalEstimate($reservation);
-    
+
             if ($reservation->total_price == $reservation->paid) {
                 $reservation->status = 1;
             } elseif ($reservation->paid > 0) {
@@ -122,17 +130,17 @@ final class CaptainReservationsTable extends PowerGridComponent
             if ($reservation->reservationIntervals->isNotEmpty()) {
                 $ri = $reservation->reservationIntervals->first();
                 $reservation->extra = $ri->amount;
-                $reservation->extra_formatted = $ri->amount . " " . $ri->inventory->abbreviation;
+                $reservation->extra_formatted = $ri->amount.' '.$ri->inventory->abbreviation;
             } else {
                 $reservation->extra = 0;
-                $reservation->extra_formatted = "";
+                $reservation->extra_formatted = '';
             }
 
             $reservation->debt = $reservation->total_price - $reservation->bankTransactions()->where('approved', true)->sum('potrazuje_copy');
-    
+
             return $reservation;
         });
-    
+
         return $reservations;
     }
 
@@ -144,8 +152,8 @@ final class CaptainReservationsTable extends PowerGridComponent
 
     public function header(): array
     {
-        return [            
-        ];    
+        return [
+        ];
     }
 
     public function fields(): PowerGridFields
@@ -162,7 +170,7 @@ final class CaptainReservationsTable extends PowerGridComponent
             ->add('total_runners')
             ->add('is_locked')
             ->add('total_price')
-            ->add('total_price_in_eur', fn ($reservation) => $reservation->total_price ? Number::format($reservation->total_price, 2, locale: 'sr') : "0,00")
+            ->add('total_price_in_eur', fn ($reservation) => $reservation->total_price ? Number::format($reservation->total_price, 2, locale: 'sr') : '0,00')
             ->add('extra')
             ->add('extra_formatted')
             ->add('status', function ($reservation) {
@@ -178,7 +186,7 @@ final class CaptainReservationsTable extends PowerGridComponent
                 }
             })
             ->add('debt')
-            ->add('debt_in_eur', fn ($reservation) => $reservation->debt ? Number::format($reservation->debt, 2, locale: 'sr') : "0,00");
+            ->add('debt_in_eur', fn ($reservation) => $reservation->debt ? Number::format($reservation->debt, 2, locale: 'sr') : '0,00');
     }
 
     public function columns(): array
@@ -187,7 +195,7 @@ final class CaptainReservationsTable extends PowerGridComponent
             Column::add()
                 ->title(__('ID'))
                 ->field('id')
-                ->hidden( isHidden:true, isForceHidden:true ),
+                ->hidden(isHidden: true, isForceHidden: true),
             Column::add()
                 ->title(__('ID'))
                 ->field('reservation_no', 'id')
@@ -202,13 +210,13 @@ final class CaptainReservationsTable extends PowerGridComponent
                 ->title(__('Race name'))
                 ->field('race_name')
                 ->sortable()
-                ->searchable(),   
+                ->searchable(),
             Column::add()
                 ->title(__('Billing company'))
                 ->field('billing_company')
                 ->sortable()
                 ->searchable()
-                ->withCount('CT', header: true, footer: true),                     
+                ->withCount('CT', header: true, footer: true),
             Column::add()
                 ->title(__('Filled'))
                 ->field('registered')
@@ -216,7 +224,7 @@ final class CaptainReservationsTable extends PowerGridComponent
                 ->searchable()
                 ->withSum('∑', header: true, footer: true)
                 ->headerAttribute('text-right')
-                ->bodyAttribute('text-right'), 
+                ->bodyAttribute('text-right'),
             Column::add()
                 ->title(__('Reserved'))
                 ->field('reserved')
@@ -224,7 +232,7 @@ final class CaptainReservationsTable extends PowerGridComponent
                 ->searchable()
                 ->withSum('∑', header: true, footer: true)
                 ->headerAttribute('text-right')
-                ->bodyAttribute('text-right'), 
+                ->bodyAttribute('text-right'),
             Column::add()
                 ->title(__('Extra'))
                 ->field('extra_formatted', 'extra')
@@ -232,7 +240,7 @@ final class CaptainReservationsTable extends PowerGridComponent
                 ->searchable()
                 ->withSum('∑', header: true, footer: true)
                 ->headerAttribute('text-right')
-                ->bodyAttribute('text-right'),  
+                ->bodyAttribute('text-right'),
             Column::add()
                 ->title(__('Price'))
                 ->field('total_price_in_eur', 'total_price')
@@ -240,9 +248,9 @@ final class CaptainReservationsTable extends PowerGridComponent
                 ->searchable()
                 ->withSum('∑', header: true, footer: true)
                 ->headerAttribute('text-right')
-                ->bodyAttribute('text-right'), 
+                ->bodyAttribute('text-right'),
             Column::make('Status', 'status')
-                ->template(),   
+                ->template(),
             Column::add()
                 ->title(__('Debt'))
                 ->field('debt_in_eur', 'debt')
@@ -250,14 +258,14 @@ final class CaptainReservationsTable extends PowerGridComponent
                 ->searchable()
                 ->withSum('∑', header: true, footer: true)
                 ->headerAttribute('text-right')
-                ->bodyAttribute('text-right'),          
+                ->bodyAttribute('text-right'),
             Column::add()
                 ->title(__('Locked'))
                 ->field('is_locked')
-                ->hidden( isHidden:true, isForceHidden:true ),
+                ->hidden(isHidden: true, isForceHidden: true),
             Column::action('Action')
                 ->title(__('Action'))
-                ->visibleInExport(visible: false)
+                ->visibleInExport(visible: false),
         ];
     }
 
@@ -279,17 +287,15 @@ final class CaptainReservationsTable extends PowerGridComponent
     #[\Livewire\Attributes\On('view')]
     public function view($rowId)
     {
-        if($rowId)
-        {
+        if ($rowId) {
             return redirect()->route('reservations.show', ['reservationId' => $rowId]);
-        }        
+        }
     }
 
     public function actions($row): array
     {
-        if($row)
-        {
-            return [     
+        if ($row) {
+            return [
                 Button::add('view')
                     ->slot('<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.0" stroke="currentColor" class="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
@@ -298,36 +304,31 @@ final class CaptainReservationsTable extends PowerGridComponent
                     ->id('view-'.$row->id)
                     ->class('text-white bg-gray-500 hover:bg-gray-800 rounded p-2')
                     ->dispatch('view', ['rowId' => $row->id])
-                    ->tooltip(__('View')), 
+                    ->tooltip(__('View')),
             ];
-        }
-        else 
-        {
+        } else {
             return [];
         }
     }
 
     public function actionRules(): array
     {
-       return [
+        return [
             Rule::button('view')
-                ->when(fn() => Auth::user()->hasRole(['superadmin', 'organizer', 'captain']) === false)
+                ->when(fn () => Auth::user()->hasRole(['superadmin', 'organizer', 'captain']) === false)
                 ->hide(),
         ];
     }
-	
-	public function calculateTotalEstimate($reservation): float
+
+    public function calculateTotalEstimate($reservation): float
     {
         $totalAmount = 0;
 
         $promoCode = PromoCode::where('promo_code', $reservation->promo_code);
 
-        if($promoCode)
-        {
+        if ($promoCode) {
             $promoCode = $promoCode->first();
-        }
-        else
-        {
+        } else {
             $promoCode = null;
         }
 
@@ -338,68 +339,59 @@ final class CaptainReservationsTable extends PowerGridComponent
             })
             ->withMin('inventoryIntervals', 'start_date')
             ->orderBy('inventory_intervals_min_start_date', 'ASC')
-            ->get();    
+            ->get();
 
-        if ($reservation->reserved_places > 0 && $reservationInventory && $reservationInventory->first()->inventoryIntervals->isNotEmpty()) 
-        {         
-            $filteredInterval = $reservationInventory->first()->inventoryIntervals->filter(function($ii) use ($reservation) {
+        if ($reservation->reserved_places > 0 && $reservationInventory && $reservationInventory->first()->inventoryIntervals->isNotEmpty()) {
+            $filteredInterval = $reservationInventory->first()->inventoryIntervals->filter(function ($ii) use ($reservation) {
                 $intervalStart = Carbon::parse($ii->start_date);
-                $intervalEnd   = Carbon::parse($ii->end_date);
+                $intervalEnd = Carbon::parse($ii->end_date);
                 $now = Carbon::now();
-                
+
                 $lockedDate = $reservation->locked_date ? Carbon::parse($reservation->locked_date) : null;
                 $paymentDate = $reservation->payment_date ? Carbon::parse($reservation->payment_date) : null;
-            
+
                 $lockedInInterval = $lockedDate && $lockedDate->betweenDates($intervalStart, $intervalEnd);
-                $paidInInterval   = $paymentDate && $paymentDate->betweenDates($intervalStart, $intervalEnd);
-                $nowInInterval    = $now->betweenDates($intervalStart, $intervalEnd);
+                $paidInInterval = $paymentDate && $paymentDate->betweenDates($intervalStart, $intervalEnd);
+                $nowInInterval = $now->betweenDates($intervalStart, $intervalEnd);
 
                 return $lockedInInterval || $paidInInterval || $nowInInterval;
             })->first();
-            
-            if (!$filteredInterval) 
-            {
+
+            if (! $filteredInterval) {
                 $filteredInterval = $reservationInventory->first()->inventoryIntervals->last();
             }
-       
-            if($promoCode && $promoCode->promoType->promo_type_name == 'fixed price')
-            {                        
+
+            if ($promoCode && $promoCode->promoType->promo_type_name == 'fixed price') {
                 $totalAmount = $reservation->reserved_places * $promoCode->price;
-            }
-            else
-            {
+            } else {
                 $totalAmount = $reservation->reserved_places * $filteredInterval->price;
 
-                if($promoCode && $promoCode->promoType->promo_type_name == 'free')
-                {
+                if ($promoCode && $promoCode->promoType->promo_type_name == 'free') {
                     $totalAmount -= $promoCode->amount * $filteredInterval->price;
-                }    
+                }
             }
         }
 
-        foreach ($reservation->reservationIntervals as $ri) 
-        {
-            if ($ri->inventory && $ri->inventory->inventoryIntervals) 
-            {
+        foreach ($reservation->reservationIntervals as $ri) {
+            if ($ri->inventory && $ri->inventory->inventoryIntervals) {
                 $intervalPrice = $ri->inventory->inventoryIntervals->last()->price;
                 $totalAmount += $ri->amount * $intervalPrice;
 
-                if($promoCode && $promoCode->promoType->promo_type_name == 'other')
-                {
+                if ($promoCode && $promoCode->promoType->promo_type_name == 'other') {
                     $totalAmount -= $promoCode->amount * $reservation->reservationIntervals->first()->inventory->inventoryIntervals->first()->price;
-                }    
+                }
             }
         }
 
         $vatPercent = $reservation->captain->organizer->countryData->vat_percent ?? 0;
         $totalVat = $totalAmount * ($vatPercent / 100);
 
-        $totalTotal = $totalAmount + $totalVat;    
+        $totalTotal = $totalAmount + $totalVat;
 
         return $totalTotal;
     }
-	
-	public function rowTemplates(): array
+
+    public function rowTemplates(): array
     {
         return [
             'check-circle' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 {{ text-color }}">
@@ -414,7 +406,7 @@ final class CaptainReservationsTable extends PowerGridComponent
             'question-circle' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 {{ text-color }}">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
             </svg>',
-        ];        
+        ];
     }
 
     public function summarizeFormat(): array
@@ -422,7 +414,7 @@ final class CaptainReservationsTable extends PowerGridComponent
         return [
             'total_price.{sum,avg,min,max}' => fn ($value) => Number::format($value, 2, locale: 'sr'),
             'debt.{sum,avg,min,max}' => fn ($value) => Number::format($value, 2, locale: 'sr'),
-            'billing_company.{count}'           => fn ($value) => Number::format($value),
+            'billing_company.{count}' => fn ($value) => Number::format($value),
         ];
     }
 }

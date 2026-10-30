@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 use Spatie\WelcomeNotification\WelcomeController as BaseWelcomeController;
+use Symfony\Component\HttpFoundation\Response;
 
 class MyWelcomeController extends BaseWelcomeController
 {

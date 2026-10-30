@@ -4,18 +4,18 @@ namespace App\Jobs;
 
 use App\Mail\MailerService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 
 class MailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    
+
     private $params;
-    
+
     /**
      * Create a new job instance.
      *
@@ -33,12 +33,9 @@ class MailJob implements ShouldQueue
      */
     public function handle()
     {
-        try 
-        {
+        try {
             Mail::to($this->params['recipient'])->send(new MailerService($this->params));
-        }
-        catch (\Exception $e) 
-        {
+        } catch (\Exception $e) {
             throw $e;
         }
     }

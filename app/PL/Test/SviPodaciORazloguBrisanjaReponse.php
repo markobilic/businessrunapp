@@ -1,21 +1,20 @@
 <?php
-namespace App\PL\Test;
 
+namespace App\PL\Test;
 
 class SviPodaciORazloguBrisanjaReponse
 {
-
     /**
-     * @var Sifarnik $sifarnik
+     * @var Sifarnik
      */
     protected $sifarnik = null;
 
     /**
-     * @param Sifarnik $sifarnik
+     * @param  Sifarnik  $sifarnik
      */
     public function __construct($sifarnik)
     {
-      $this->sifarnik = $sifarnik;
+        $this->sifarnik = $sifarnik;
     }
 
     /**
@@ -23,17 +22,17 @@ class SviPodaciORazloguBrisanjaReponse
      */
     public function getSifarnik()
     {
-      return $this->sifarnik;
+        return $this->sifarnik;
     }
 
     /**
-     * @param Sifarnik $sifarnik
+     * @param  Sifarnik  $sifarnik
      * @return SviPodaciORazloguBrisanjaReponse
      */
     public function setSifarnik($sifarnik)
     {
-      $this->sifarnik = $sifarnik;
-      return $this;
-    }
+        $this->sifarnik = $sifarnik;
 
+        return $this;
+    }
 }

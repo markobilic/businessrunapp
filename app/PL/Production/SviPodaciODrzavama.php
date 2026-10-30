@@ -1,14 +1,8 @@
 <?php
-namespace App\PL\Production;
 
+namespace App\PL\Production;
 
 class SviPodaciODrzavama
 {
-
-    
-    public function __construct()
-    {
-    
-    }
-
+    public function __construct() {}
 }

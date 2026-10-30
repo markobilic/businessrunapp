@@ -34,8 +34,8 @@ return new class extends Migration
             $table->integer('broj_izvoda')->nullable();
             $table->date('datum_izvoda')->nullable();
             $table->boolean('approved')->default(false);
-            $table->foreignId('reservation_id')->nullable()->constrained('reservations');   
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers');   
+            $table->foreignId('reservation_id')->nullable()->constrained('reservations');
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers');
             $table->timestamps();
             $table->softDeletes();
         });

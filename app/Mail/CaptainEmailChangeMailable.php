@@ -11,6 +11,7 @@ class CaptainEmailChangeMailable extends Mailable
     use Queueable, SerializesModels;
 
     public string $oldEmail;
+
     public string $newEmail;
 
     /**

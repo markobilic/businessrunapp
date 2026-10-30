@@ -5,12 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\InventoryType;
-use App\Models\InventorySubType;
-use App\Models\Race;
-use App\Models\InventoryInterval;
-use App\Models\Order;
-use App\Models\ReservationInterval;
 
 class Inventory extends Model
 {

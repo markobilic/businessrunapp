@@ -4,18 +4,17 @@ namespace App\PL\Test;
 
 class PreuzmiPodatkeOPrivrednomSubjektuResponse
 {
-
     /**
-     * @var ArrayOfPrivredniSubjekat $PrivredniSubjektiPodaci
+     * @var ArrayOfPrivredniSubjekat
      */
     protected $PrivredniSubjektiPodaci = null;
 
     /**
-     * @param ArrayOfPrivredniSubjekat $PrivredniSubjektiPodaci
+     * @param  ArrayOfPrivredniSubjekat  $PrivredniSubjektiPodaci
      */
     public function __construct($PrivredniSubjektiPodaci)
     {
-      $this->PrivredniSubjektiPodaci = $PrivredniSubjektiPodaci;
+        $this->PrivredniSubjektiPodaci = $PrivredniSubjektiPodaci;
     }
 
     /**
@@ -23,17 +22,17 @@ class PreuzmiPodatkeOPrivrednomSubjektuResponse
      */
     public function getPrivredniSubjektiPodaci()
     {
-      return $this->PrivredniSubjektiPodaci;
+        return $this->PrivredniSubjektiPodaci;
     }
 
     /**
-     * @param ArrayOfPrivredniSubjekat $PrivredniSubjektiPodaci
+     * @param  ArrayOfPrivredniSubjekat  $PrivredniSubjektiPodaci
      * @return PreuzmiPodatkeOPrivrednomSubjektuResponse
      */
     public function setPrivredniSubjektiPodaci($PrivredniSubjektiPodaci)
     {
-      $this->PrivredniSubjektiPodaci = $PrivredniSubjektiPodaci;
-      return $this;
-    }
+        $this->PrivredniSubjektiPodaci = $PrivredniSubjektiPodaci;
 
+        return $this;
+    }
 }

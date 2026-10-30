@@ -1,37 +1,32 @@
 <?php
-namespace App\PL\Production;
 
+namespace App\PL\Production;
 
 class PrivredniSubjektiUlazniPodaci
 {
-
     /**
-     * @var PrivredniSubjekatMaticniBroj $privredniSubjekti
+     * @var PrivredniSubjekatMaticniBroj
      */
     protected $privredniSubjekti = null;
 
-    
-    public function __construct()
-    {
-    
-    }
+    public function __construct() {}
 
     /**
      * @return PrivredniSubjekatMaticniBroj
      */
     public function getPrivredniSubjekti()
     {
-      return $this->privredniSubjekti;
+        return $this->privredniSubjekti;
     }
 
     /**
-     * @param PrivredniSubjekatMaticniBroj $privredniSubjekti
+     * @param  PrivredniSubjekatMaticniBroj  $privredniSubjekti
      * @return PrivredniSubjektiUlazniPodaci
      */
     public function setPrivredniSubjekti($privredniSubjekti)
     {
-      $this->privredniSubjekti = $privredniSubjekti;
-      return $this;
-    }
+        $this->privredniSubjekti = $privredniSubjekti;
 
+        return $this;
+    }
 }

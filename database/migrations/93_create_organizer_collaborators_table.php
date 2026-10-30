@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('organizer_collaborators', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('organizer_id')->constrained('organizers');   
-            $table->foreignId('user_id')->constrained('users'); 
+            $table->foreignId('organizer_id')->constrained('organizers');
+            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
     }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('work_positions', function (Blueprint $table) {
             $table->id();
             $table->string('work_position_name');
-            $table->foreignId('organizer_id')->nullable()->constrained('organizers');   
+            $table->foreignId('organizer_id')->nullable()->constrained('organizers');
             $table->timestamps();
             $table->softDeletes();
         });

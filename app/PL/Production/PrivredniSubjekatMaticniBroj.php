@@ -1,31 +1,30 @@
 <?php
-namespace App\PL\Production;
 
+namespace App\PL\Production;
 
 class PrivredniSubjekatMaticniBroj
 {
-
     /**
-     * @var string $maticniBroj
+     * @var string
      */
     protected $maticniBroj = null;
 
     /**
-     * @var PrivredniSubjekatMaticniBrojTip $tip
+     * @var PrivredniSubjekatMaticniBrojTip
      */
     protected $tip = null;
 
     /**
-     * @var PrivredniSubjekatGrupaPodataka[] $gp
+     * @var PrivredniSubjekatGrupaPodataka[]
      */
     protected $gp = null;
 
     /**
-     * @param PrivredniSubjekatMaticniBrojTip $tip
+     * @param  PrivredniSubjekatMaticniBrojTip  $tip
      */
     public function __construct($tip)
     {
-      $this->tip = $tip;
+        $this->tip = $tip;
     }
 
     /**
@@ -33,17 +32,18 @@ class PrivredniSubjekatMaticniBroj
      */
     public function getMaticniBroj()
     {
-      return $this->maticniBroj;
+        return $this->maticniBroj;
     }
 
     /**
-     * @param string $maticniBroj
+     * @param  string  $maticniBroj
      * @return PrivredniSubjekatMaticniBroj
      */
     public function setMaticniBroj($maticniBroj)
     {
-      $this->maticniBroj = $maticniBroj;
-      return $this;
+        $this->maticniBroj = $maticniBroj;
+
+        return $this;
     }
 
     /**
@@ -51,17 +51,18 @@ class PrivredniSubjekatMaticniBroj
      */
     public function getTip()
     {
-      return $this->tip;
+        return $this->tip;
     }
 
     /**
-     * @param PrivredniSubjekatMaticniBrojTip $tip
+     * @param  PrivredniSubjekatMaticniBrojTip  $tip
      * @return PrivredniSubjekatMaticniBroj
      */
     public function setTip($tip)
     {
-      $this->tip = $tip;
-      return $this;
+        $this->tip = $tip;
+
+        return $this;
     }
 
     /**
@@ -69,17 +70,17 @@ class PrivredniSubjekatMaticniBroj
      */
     public function getGp()
     {
-      return $this->gp;
+        return $this->gp;
     }
 
     /**
-     * @param PrivredniSubjekatGrupaPodataka[] $gp
+     * @param  PrivredniSubjekatGrupaPodataka[]  $gp
      * @return PrivredniSubjekatMaticniBroj
      */
-    public function setGp(array $gp = null)
+    public function setGp(?array $gp = null)
     {
-      $this->gp = $gp;
-      return $this;
-    }
+        $this->gp = $gp;
 
+        return $this;
+    }
 }

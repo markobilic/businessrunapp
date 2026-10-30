@@ -5,27 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\CountryData;
-use App\Models\User;
-use App\Models\Captain;
-use App\Models\BillingTemplate;
-use App\Models\BusinessType;
-use App\Models\CompanyType;
-use App\Models\InventorySubType;
-use App\Models\InventoryType;
-use App\Models\LongestRace;
-use App\Models\PromoType;
-use App\Models\ShirtSize;
-use App\Models\SocksSize;
-use App\Models\TotalEmployeeType;
-use App\Models\WeekRunning;
-use App\Models\WorkPosition;
-use App\Models\WorkSector;
-use App\Models\Race;
-use App\Models\TemplateType;
-use App\Models\BankTransaction;
-use App\Models\Translation;
-use App\Models\OrganizerCollaborator;
 
 class Organizer extends Model
 {
@@ -61,7 +40,7 @@ class Organizer extends Model
         'logo_alt',
         'user_id',
         'language',
-        'remember_token'
+        'remember_token',
     ];
 
     public function countryData()
@@ -73,7 +52,7 @@ class Organizer extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    
+
     public function users()
     {
         return $this->hasMany(User::class, 'organizer_id');
@@ -123,7 +102,7 @@ class Organizer extends Model
     {
         return $this->hasMany(ShirtSize::class, 'organizer_id');
     }
-    
+
     public function socksSizes()
     {
         return $this->hasMany(SocksSize::class, 'organizer_id');

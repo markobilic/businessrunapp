@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('promo_codes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('race_id')->constrained('races');   
+            $table->foreignId('race_id')->constrained('races');
             $table->string('promo_code');
             $table->string('description');
             $table->tinyInteger('type')->nullable()->default(0);
-            $table->foreignId('promo_type_id')->nullable()->constrained('promo_types');   
+            $table->foreignId('promo_type_id')->nullable()->constrained('promo_types');
             $table->integer('amount')->nullable();
             $table->integer('price')->nullable();
             $table->timestamps();
