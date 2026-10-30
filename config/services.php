@@ -37,6 +37,8 @@ return [
 
     'webhook' => [
         'external_url' => env('WEBHOOK_URL', 'https://eo9x81g9w4s8j42.m.pipedream.net'),
+        // When set, incoming Pipedream requests must send it in the X-Webhook-Secret header.
+        'secret' => env('PIPEDREAM_WEBHOOK_SECRET'),
     ],
 
     'kancelarko' => [

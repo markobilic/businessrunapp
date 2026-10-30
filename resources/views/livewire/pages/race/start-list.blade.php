@@ -34,7 +34,7 @@ new class extends Component {
                 $this->organizerId = null;
             }   
             
-            $race = Race::findOrFail($raceId);
+            $race = Race::where('organizer_id', $this->organizerId)->findOrFail($raceId);
 
             if($race)
             {

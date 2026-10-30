@@ -19,7 +19,7 @@ new class extends Component {
     public $lastRaces;
 
     public BankTransaction $selectedBankTransaction;
-    public $bankTransactions, $bankTransactionId;
+    public $bankTransactionId;
     public $selectedBankTransactions;
 
     public $emptyReservations = [];
@@ -32,6 +32,11 @@ new class extends Component {
     public function resetError()
     {
         $this->resetErrorBag('error');
+    }
+
+    private function authorizeOrganizer(): void
+    {
+        abort_unless(auth()->user()->hasRole(['superadmin', 'organizer']), 403);
     }
 
     public function mount()
@@ -56,7 +61,6 @@ new class extends Component {
             $this->organizerId = null;
         }
         
-        $this->bankTransactions = BankTransaction::where('organizer_id', $this->organizerId)->orderBy('created_at', 'DESC')->get();
         
         if(Auth::user()->hasRole(['captain']))
         {
@@ -157,15 +161,19 @@ new class extends Component {
     
     public function duplicateSelectedBankTransaction($bankTransactionId)
     {
+        $this->authorizeOrganizer();
+
         $this->bankTransactionId = $bankTransactionId;
         $this->dispatch('confirmDuplication', ['bankTransactionId' => $bankTransactionId]);
     }
 
     public function duplicateBankTransactionConfirmed()
     {
+        $this->authorizeOrganizer();
+
         if($this->bankTransactionId)
         {
-            $bankTransaction = BankTransaction::findOrFail($this->bankTransactionId);
+            $bankTransaction = BankTransaction::where('organizer_id', $this->organizerId)->findOrFail($this->bankTransactionId);
 
             if($bankTransaction)
             {
@@ -182,15 +190,19 @@ new class extends Component {
 
     public function deleteSelectedBankTransaction($bankTransactionId)
     {
+        $this->authorizeOrganizer();
+
         $this->bankTransactionId = $bankTransactionId;
         $this->dispatch('confirmDeletion', ['bankTransactionId' => $bankTransactionId]);
     }
     
     public function deleteBankTransactionConfirmed()
     {
+        $this->authorizeOrganizer();
+
         if($this->bankTransactionId)
         {
-            $bankTransaction = BankTransaction::findOrFail($this->bankTransactionId);
+            $bankTransaction = BankTransaction::where('organizer_id', $this->organizerId)->findOrFail($this->bankTransactionId);
 
             if($bankTransaction)
             {
@@ -205,6 +217,8 @@ new class extends Component {
 
     public function multipleDeleteBankTransactions($selectedRows)
     {
+        $this->authorizeOrganizer();
+
         $this->reset(['selectedBankTransactions']);
 
         if($selectedRows)
@@ -213,7 +227,7 @@ new class extends Component {
 
             foreach($selectedRows as $row)
             {
-                $foundBankTransaction = BankTransaction::find($row);
+                $foundBankTransaction = BankTransaction::where('organizer_id', $this->organizerId)->find($row);
 
                 if($foundBankTransaction)
                 {                    
@@ -236,11 +250,13 @@ new class extends Component {
 
     public function deleteBankTransactionsConfirmed()
     {
+        $this->authorizeOrganizer();
+
         if($this->selectedBankTransactions)
         {
             foreach($this->selectedBankTransactions as $sbt)
             {
-                $foundBankTransaction = BankTransaction::find($sbt);
+                $foundBankTransaction = BankTransaction::where('organizer_id', $this->organizerId)->find($sbt);
 
                 if($foundBankTransaction)
                 {
@@ -257,6 +273,8 @@ new class extends Component {
 
     public function updateMultipleBankTransactions($selectedRows)
     {
+        $this->authorizeOrganizer();
+
         $this->reset(['selectedBankTransactions']);
 
         if($selectedRows)
@@ -265,7 +283,7 @@ new class extends Component {
 
             foreach($selectedRows as $row)
             {
-                $foundBankTransaction = BankTransaction::findOrFail($row);
+                $foundBankTransaction = BankTransaction::where('organizer_id', $this->organizerId)->findOrFail($row);
 
                 if($foundBankTransaction)
                 {                    
@@ -288,9 +306,11 @@ new class extends Component {
 
     public function setBulkReservation()
     {
+        $this->authorizeOrganizer();
+
         if($this->reservation_id && $this->reservation_id > 0)
         {
-            $reservation = Reservation::findOrFail($this->reservation_id);
+            $reservation = Reservation::whereHas('race', fn ($q) => $q->where('organizer_id', $this->organizerId))->findOrFail($this->reservation_id);
 
             if(!$reservation)
             {
@@ -304,7 +324,7 @@ new class extends Component {
 
         foreach($this->selectedBankTransactions as $sbt)
         {
-            $bankTransaction = BankTransaction::findOrFail($sbt);
+            $bankTransaction = BankTransaction::where('organizer_id', $this->organizerId)->findOrFail($sbt);
 
             if($bankTransaction)
             {

@@ -71,6 +71,20 @@ new class extends Component {
         $this->resetErrorBag('error');
     }
 
+    // Akcije koje u predlosku vidi samo organizator moraju to provjeriti i na serveru,
+    // jer se Livewire metode mogu pozvati i izravno iz preglednika.
+    private function authorizeOrganizer(): void
+    {
+        abort_unless(auth()->user()->hasRole(['superadmin', 'organizer']), 403);
+    }
+
+    private function authorizeReservation($reservationId): Reservation
+    {
+        abort_unless((int) $reservationId === (int) $this->reservationId, 403);
+
+        return $this->selectedReservation;
+    }
+
     public function mount($reservationId)
     {
         if($reservationId)
@@ -87,7 +101,7 @@ new class extends Component {
                 $this->organizerId = null;
             }   
             
-            $reservation = Reservation::findOrFail($reservationId);
+            $reservation = Reservation::whereHas('race', fn ($q) => $q->where('organizer_id', $this->organizerId))->findOrFail($reservationId);
 
             if($reservation)
             {
@@ -312,7 +326,7 @@ new class extends Component {
     {
         if($this->runnerReservationId)
         {
-            $runnerReservation = RunnerReservation::findOrFail($this->runnerReservationId);
+            $runnerReservation = RunnerReservation::where('reservation_id', $this->reservationId)->findOrFail($this->runnerReservationId);
 
             if($runnerReservation)
             {
@@ -329,15 +343,19 @@ new class extends Component {
 
     public function deleteSelectedBankTransaction($bankTransactionId)
     {
+        $this->authorizeOrganizer();
+
         $this->bankTransactionId = $bankTransactionId;
         $this->dispatch('confirmTransactionDeletion', ['bankTransactionId' => $bankTransactionId]);
     }
     
     public function deleteBankTransactionConfirmed()
     {
+        $this->authorizeOrganizer();
+
         if($this->bankTransactionId)
         {
-            $bankTransaction = BankTransaction::findOrFail($this->bankTransactionId);
+            $bankTransaction = BankTransaction::where('reservation_id', $this->reservationId)->findOrFail($this->bankTransactionId);
 
             if($bankTransaction)
             {
@@ -427,6 +445,8 @@ new class extends Component {
 
     public function updatedOrderNumber()
     {
+        $this->authorizeOrganizer();
+
         if($this->order_number)
         {
             $this->selectedReservation->order_number = $this->order_number;
@@ -441,6 +461,8 @@ new class extends Component {
 
     public function updatedCrf()
     {
+        $this->authorizeOrganizer();
+
         if($this->crf)
         {
             $this->selectedReservation->crf = true;            
@@ -455,30 +477,33 @@ new class extends Component {
     
     public function downloadEstimate($reservationId, ExportService $exportService)
     {
-        $reservation = Reservation::findOrFail($reservationId);
+        $reservation = $this->authorizeReservation($reservationId);
         return $exportService->exportToPdf($reservation, 'invoice');
     }
 
     public function downloadFinalInvoice($reservationId, ExportService $exportService)
     {
-        $reservation = Reservation::findOrFail($reservationId);
+        $reservation = $this->authorizeReservation($reservationId);
         return $exportService->exportToPdf($reservation, 'finalBill');
     }
     
     public function downloadAdvanceInvoice($reservationId, $bankTransactionId, ExportService $exportService)
     {
-        $reservation = Reservation::findOrFail($reservationId);
+        $reservation = $this->authorizeReservation($reservationId);
+        abort_unless($reservation->bankTransactions()->whereKey($bankTransactionId)->exists(), 403);
         return $exportService->exportToPdf($reservation, 'bill', false,$bankTransactionId);
     }
     
     public function downloadAdvanceInvoiceOld($reservationId, ExportService $exportService)
     {
-        $reservation = Reservation::findOrFail($reservationId);
+        $reservation = $this->authorizeReservation($reservationId);
         return $exportService->exportToPdf($reservation, 'bill-old', false);
     }
 
     public function sendToKancelarko($bankTransactionId)
     {
+        $this->authorizeOrganizer();
+
         if($this->selectedReservation && $bankTransactionId)
         {
             $this->bankTransactionId = $bankTransactionId;
@@ -488,6 +513,8 @@ new class extends Component {
 
     public function resendToKancelarko($bankTransactionId)
     {
+        $this->authorizeOrganizer();
+
         if($this->selectedReservation && $bankTransactionId)
         {
             $this->bankTransactionId = $bankTransactionId;
@@ -497,8 +524,12 @@ new class extends Component {
 
     public function kancelarkoSendConfirmed(ReservationService_v2 $reservationService_v2)
     {
+        $this->authorizeOrganizer();
+
         if($this->bankTransactionId && $this->selectedReservation)
         {
+            abort_unless($this->selectedReservation->bankTransactions()->whereKey($this->bankTransactionId)->exists(), 403);
+
             $reservationService_v2->sendPrebillToSwagger($this->selectedReservation, $this->bankTransactionId);
     
             $this->reset(['bankTransactionId']);
@@ -511,6 +542,8 @@ new class extends Component {
 
     public function sendFinalToKancelarko($reservationId)
     {
+        $this->authorizeOrganizer();
+
         if($this->selectedReservation && $reservationId)
         {
             $this->dispatch('confirmKancelarkoFinalSend');
@@ -519,6 +552,8 @@ new class extends Component {
 
     public function resendFinalToKancelarko($reservationId)
     {
+        $this->authorizeOrganizer();
+
         if($this->selectedReservation && $reservationId)
         {
             $this->dispatch('confirmKancelarkoFinalSend');
@@ -527,6 +562,8 @@ new class extends Component {
 
     public function kancelarkoFinalSendConfirmed(ReservationService_v2 $reservationService_v2)
     {
+        $this->authorizeOrganizer();
+
         if($this->selectedReservation)
         {
             $reservationService_v2->sendFinalBillToSwagger($this->selectedReservation);
@@ -582,6 +619,8 @@ new class extends Component {
 
     public function updatedCreatedAt()
     {
+        $this->authorizeOrganizer();
+
         if($this->created_at)
         {
             $this->selectedReservation->update([
@@ -592,6 +631,8 @@ new class extends Component {
 
     public function updatedLockedDate()
     {
+        $this->authorizeOrganizer();
+
         if(!$this->locked_date)
         {
             $locked = false;
@@ -609,6 +650,8 @@ new class extends Component {
     
     public function setPaid($paid, MailService $mailService)
     {
+        $this->authorizeOrganizer();
+
         if($this->organizerId !== 2)
         {
             if($paid == 1)

@@ -44,7 +44,7 @@ class LoginForm extends Form
     /**
      * Ensure the authentication request is not rate limited.
      */
-    protected function ensureIsNotRateLimited(): void
+    public function ensureIsNotRateLimited(): void
     {
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
@@ -60,6 +60,22 @@ class LoginForm extends Form
                 'minutes' => ceil($seconds / 60),
             ]),
         ]);
+    }
+
+    /**
+     * Record a failed login attempt.
+     */
+    public function hitRateLimit(): void
+    {
+        RateLimiter::hit($this->throttleKey());
+    }
+
+    /**
+     * Reset failed login attempts after a successful login.
+     */
+    public function clearRateLimit(): void
+    {
+        RateLimiter::clear($this->throttleKey());
     }
 
     /**

@@ -70,7 +70,7 @@ new class extends Component {
                 $this->organizerId = null;
             }   
             
-            $captain = Captain::findOrFail($teamId);
+            $captain = Captain::where('organizer_id', $this->organizerId)->findOrFail($teamId);
 
             if($captain)
             {

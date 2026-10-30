@@ -59,7 +59,7 @@ new class extends Component {
                 $this->organizerId = null;
             }   
             
-            $reservation = Reservation::findOrFail($reservationId);
+            $reservation = Reservation::whereHas('race', fn ($q) => $q->where('organizer_id', $this->organizerId))->findOrFail($reservationId);
 
             if($reservation)
             {

@@ -12,6 +12,14 @@ class WebhookController extends Controller
 {
     public function handle(Request $request)
     {
+        $secret = config('services.webhook.secret');
+
+        if ($secret && ! hash_equals($secret, (string) $request->header('X-Webhook-Secret'))) {
+            Log::warning('Webhook rejected: invalid secret', ['ip' => $request->ip()]);
+
+            return response()->json(['status' => 'unauthorized'], 401);
+        }
+
         $data = $request->validate([
             'stavke' => 'required|array',
         ]);

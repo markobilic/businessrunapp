@@ -73,14 +73,14 @@ new class extends Component {
                 $this->organizerId = null;
             }   
             
-            $captain = Captain::findOrFail($teamId);
+            $captain = Captain::where('organizer_id', $this->organizerId)->findOrFail($teamId);
 
             if($captain)
             {
                 $this->selectedCaptain = $captain;
                 $this->captainId = $teamId;
                 
-                $captainAddress = CaptainAddress::findOrFail($addressId);
+                $captainAddress = $captain->captainAddresses()->findOrFail($addressId);
                 
                 if($captainAddress)
                 {

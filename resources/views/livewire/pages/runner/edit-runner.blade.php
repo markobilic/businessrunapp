@@ -82,7 +82,7 @@ new class extends Component {
                 $this->organizerId = null;
             }   
             
-            $runner = Runner::findOrFail($runnerId);
+            $runner = Runner::whereHas('captain', fn ($q) => $q->where('organizer_id', $this->organizerId))->findOrFail($runnerId);
 
             if($runner)
             {

@@ -20,11 +20,14 @@ new #[Layout('layouts.guest')] class extends Component
     {
         $this->validate();
 
+        $this->form->ensureIsNotRateLimited();
+
         $currentOrganizer = request()->attributes->get('current_organizer');
 
         $user = User::where('email', $this->form->email)->first();
 
         if (! $user || ! Hash::check($this->form->password, $user->password)) {
+            $this->form->hitRateLimit();
             $this->addError('form.email', __('These credentials do not match our records.'));
             return;
         }
@@ -32,7 +35,8 @@ new #[Layout('layouts.guest')] class extends Component
         {
             if ($user->hasRole(['superadmin'])) 
             {
-                Auth::login($user);
+                $this->form->clearRateLimit();
+                Auth::login($user, $this->form->remember);
     
                 Session::regenerate();
         
@@ -46,7 +50,8 @@ new #[Layout('layouts.guest')] class extends Component
                 }
                 else
                 {
-                    Auth::login($user);
+                    $this->form->clearRateLimit();
+                    Auth::login($user, $this->form->remember);
     
                     Session::regenerate();
             
@@ -55,14 +60,15 @@ new #[Layout('layouts.guest')] class extends Component
             }
             elseif ($user->hasRole(['partner', 'collaborator'])) 
             {
-                if (! $user->organizerCollaborator ) 
+                if (! $user->organizerCollaborator || $user->organizerCollaborator->organizer_id !== $currentOrganizer->id) 
                 {
                     $this->addError('form.email', __('You are not the collaborator or partner for this subdomain.'));
                     return;
                 }
                 else
                 {
-                    Auth::login($user);
+                    $this->form->clearRateLimit();
+                    Auth::login($user, $this->form->remember);
     
                     Session::regenerate();
             
@@ -78,7 +84,8 @@ new #[Layout('layouts.guest')] class extends Component
                 }
                 else
                 {
-                    Auth::login($user);
+                    $this->form->clearRateLimit();
+                    Auth::login($user, $this->form->remember);
     
                     Session::regenerate();
             
